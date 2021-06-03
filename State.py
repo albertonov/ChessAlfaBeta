@@ -59,7 +59,7 @@ class State:
     def applyAction(self, action):
         turn = -1
         eaten = False
-        newState = self.copy()
+        newState = copy.deepcopy(self)
         pieceTaken = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
         myPiece = self.m_board[action.m_initPos.row][action.m_initPos.col]
         if (pieceTaken == Utils.wKing) or (pieceTaken == Utils.bKing):

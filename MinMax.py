@@ -1,3 +1,4 @@
+import copy
 import sys
 import Utils
 from State import State
@@ -17,10 +18,10 @@ def Sucesores(state, turn):
     if(turn):                       #juegan blancas
         for pos in state.wElemList:
             print(pos[0], pos[1])
-            newStates.append(getStates(pos[0],pos[1],state))
+            newStates.extend(getStates(pos[0],pos[1],state))
     else:                           #juegan negras
         for x,y in state.bElemList:
-            newStates.append(getStates(x,y,state))
+            newStates.extend(getStates(x,y,state))
     return newStates
 
 
@@ -28,7 +29,7 @@ def getStates(x,y,state):
     stateList = []
     value = state.m_board[x][y]
     pieza = piezaFactory(value)
-    modState = state.copy()#hardcopy del estado, para modificar agente/color
+    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
     modState.m_agentPos = Position(x, y)
     actions = pieza.getPossibleActions(modState)
     for each in actions:
@@ -71,7 +72,7 @@ def MiniMax (state, turn):
 
 def MinValue(state, turn):
     turn = (turn+1)%2
-    if state.finalState or state.depth == 0:
+    if state.isFinal or state.depth == 0:
         return state
     v = m.inf
     for st in Sucesores(state,turn):
