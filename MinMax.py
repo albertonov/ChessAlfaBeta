@@ -13,15 +13,17 @@ from Bishop import Bishop
 from Queen import Queen
 from Position import Position
 
+
+
+
 def Sucesores(state, turn):
     newStates = []
     if(turn):                       #juegan blancas
         for pos in state.wElemList:
-            print(pos[0], pos[1])
             newStates.extend(getStates(pos[0],pos[1],state))
     else:                           #juegan negras
-        for x,y in state.bElemList:
-            newStates.extend(getStates(x,y,state))
+        for pos in state.bElemList:
+            newStates.extend(getStates(pos[0],pos[1],state))
     return newStates
 
 
@@ -35,6 +37,7 @@ def getStates(x,y,state):
     for each in actions:
         stateList.append(modState.applyAction(each))
     return stateList
+
 
 
 def piezaFactory(value):
@@ -66,34 +69,35 @@ def piezaFactory(value):
             return None
 
 def MiniMax (state, turn):
-    return  MaxValue(state, turn).move
+    return  MaxValue(state, turn)
 
 
 
 def MinValue(state, turn):
     turn = (turn+1)%2
     if state.isFinal or state.depth == 0:
-        return state
-    v = m.inf
+        return state.getEval()
+    v = 1000000
     for st in Sucesores(state,turn):
-        v = max(v, MaxValue(st, turn).getEval())
-
+        v = min(v, MaxValue(st, turn))
+    return v
 def MaxValue(state, turn):
     turn = (turn+1)%2
     if state.isFinal or state.depth == 0:
-        return state
-    v = -m.inf
+        return state.getEval()
+    v = -10000000
     for st in Sucesores(state, turn):
-        v = min(v, MinValue(st, turn).getEval())
+        v = max(v, MinValue(st, turn))
+    return v
 
 
 
 # main to test the methods
 
 if __name__ == '__main__':
-    st = Utils.getProblemInstance(8, 0.4, 1771, 0)
+    st = Utils.getChessInstancePosition( 0.4, 1771, 0)
     print(st.m_board)
-
+    st.reloadPositions()
     Utils.printBoard(st)
 
 

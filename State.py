@@ -14,12 +14,14 @@ class State:
     m_board = None
     m_boardSize = -1
     isFinal = False
-    depth = 4
+    depth = 3
     wElemList = []
     bElemList =  []
     m_agentPos = -1
     turn = -1
     move = None
+
+    father = None
 
     # constructor
     def __init__(self, board, turn):
@@ -34,7 +36,7 @@ class State:
         self.m_boardSize = len(board[0])
         self.wElemList = []
         self.bElemList = []
-        self.reloadPositions() # carga posiciones iniciales
+        #self.reloadPositions() # carga posiciones iniciales
 
 
     # hard copy of an State
@@ -72,15 +74,20 @@ class State:
             turn = 1 # Negras
 
         newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
-        newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = pieceTaken
+        newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = myPiece
         newState.depth = newState.depth - 1
         newInitPos = Position(action.m_initPos.row, action.m_initPos.col)
         newFinalPos = Position(action.m_finalPos.row, action.m_finalPos.col)
         newState.move = Action(newInitPos,newFinalPos)
-        newState.updateList(turn, eaten, action)
+        newState.father = self
+        #newState.updateList(turn, eaten, action)
+        newState.reloadPositions()
+
         return newState
 
     def reloadPositions(self):
+        self.wElemList.clear()
+        self.bElemList.clear()
         for eachX in range(len(self.m_board)):
             for eachY in range(len(self.m_board)):
                 if self.m_board[eachX][eachY] in range(0,6):#Blancas
@@ -125,6 +132,7 @@ class State:
         for posX, posY in self.bElemList:
             numberPiece = self.m_board[posX][posY]
             eval += valuePieces[numberPiece]
+
         return eval
 
     def __hash__(self):

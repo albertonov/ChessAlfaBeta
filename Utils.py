@@ -140,7 +140,7 @@ def getHeuristic(state):
 
 
 
-def getChessInstancePosition(p, seed):
+def getChessInstancePosition(p, seed, turn):
     numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
 
     n = 8
@@ -167,7 +167,7 @@ def getChessInstancePosition(p, seed):
                 pos = allPositions.pop(r)
                 board[pos.row][pos.col] = piece
 
-    return State(board, bkingPos, 1)
+    return State(board, turn)
 
 
 
