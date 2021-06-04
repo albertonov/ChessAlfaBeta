@@ -95,7 +95,7 @@ def MaxValue(state, turn):
 # main to test the methods
 
 if __name__ == '__main__':
-    st = Utils.getChessInstancePosition( 0.4, 1771, 0)
+    st = Utils.getChessInstancePosition( 0.2, 3456, 0)
     print(st.m_board)
     st.reloadPositions()
     Utils.printBoard(st)

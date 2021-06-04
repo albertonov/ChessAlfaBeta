@@ -191,7 +191,7 @@ class Piece:
         if self.m_color == 0:  # white king
             oponent_color = 1
         elif self.m_color == 1:  # black king
-            oponent_color = 1
+            oponent_color = 0
 
         l = []
         for x, y in self.coordinates:

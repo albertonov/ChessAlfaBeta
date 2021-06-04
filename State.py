@@ -11,6 +11,7 @@ from Position import Position
 
 
 class State:
+    id = 0
     m_board = None
     m_boardSize = -1
     isFinal = False
@@ -21,6 +22,7 @@ class State:
     turn = -1
     move = None
 
+    valorFinal = 0
     father = None
 
     # constructor
@@ -62,6 +64,7 @@ class State:
         turn = -1
         eaten = False
         newState = copy.deepcopy(self)
+        newState.id = self.id + 1
         pieceTaken = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
         myPiece = self.m_board[action.m_initPos.row][action.m_initPos.col]
         if (pieceTaken == Utils.wKing) or (pieceTaken == Utils.bKing):
@@ -73,6 +76,7 @@ class State:
         else:
             turn = 1 # Negras
 
+        newState.updateList(turn, eaten, action)
         newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
         newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = myPiece
         newState.depth = newState.depth - 1
@@ -80,8 +84,7 @@ class State:
         newFinalPos = Position(action.m_finalPos.row, action.m_finalPos.col)
         newState.move = Action(newInitPos,newFinalPos)
         newState.father = self
-        #newState.updateList(turn, eaten, action)
-        newState.reloadPositions()
+        #newState.reloadPositions()
 
         return newState
 

@@ -13,9 +13,9 @@ class Knight(Piece):
         self.m_color = color
         self.coordinates = [(-2, -1), (-2, +1), (+2, -1), (+2, +1), (-1, -2), (-1, +2), (+1, -2), (+1, +2)]
         if color == 0:
-            self.m_type = Utils.wRook
+            self.m_type = Utils.wKnight
         else:
-            self.m_type = Utils.bRook
+            self.m_type = Utils.bKnight
 
     # this method must be completed with all the possible pieces
     def getPossibleActions(self, state):
