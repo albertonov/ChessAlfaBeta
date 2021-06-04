@@ -69,36 +69,47 @@ def piezaFactory(value):
             return None
 
 def MiniMax (state, turn):
-    return  MaxValue(state, turn)
+    v, m = MaxValue(state, turn, None)
+    return v, m
 
 
 
-def MinValue(state, turn):
+def MinValue(state, turn,m):
     turn = (turn+1)%2
     if state.isFinal or state.depth == 0:
-        return state.getEval()
+        m = state.move
+        return state.getEval(), m
     v = 1000000
     for st in Sucesores(state,turn):
-        v = min(v, MaxValue(st, turn))
-    return v
-def MaxValue(state, turn):
+        act_v = MaxValue(st, turn,m)[0]
+        if act_v<v:
+            v = act_v
+            m = st.move
+    return v,m
+def MaxValue(state, turn,m):
     turn = (turn+1)%2
     if state.isFinal or state.depth == 0:
-        return state.getEval()
+        m = state.move
+        return state.getEval(), m
     v = -10000000
     for st in Sucesores(state, turn):
-        v = max(v, MinValue(st, turn))
-    return v
+        act_v = MinValue(st, turn,m)[0]
+        if act_v>v:
+            v = act_v
+            m = st.move
+    return v,m
 
 
 
 # main to test the methods
 
 if __name__ == '__main__':
-    st = Utils.getChessInstancePosition( 0.2, 3456, 0)
+    st = Utils.getChessInstancePosition(0.2, 3455, 0)
     print(st.m_board)
     st.reloadPositions()
     Utils.printBoard(st)
 
 
-    print(MiniMax(st, 0))
+    v, m = (MiniMax(st, 0))
+    print(f"Evaluation value is {v}")
+    print(f"Action is ${m}")
