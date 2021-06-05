@@ -7,19 +7,24 @@ if __name__ == '__main__':
                "\n1-Human vs algo" \
                "\n5-Exit sim" \
                "\n--------------------------"
-    probS = "Select probability" \
-            "\n2-0.2" \
-            "\n3-0.3"
-    thisdict = {
+    mainMenu = {
         1: "Human vs algo",
         2: "EXIT"
     }
-    prob = {
-        0: "Select probability (default)",
-        2: "0.2",
-        3: "0.3"
-    }
-    def getInteger():
+    def getFloat(start, end):
+        ok = False
+        num = 0
+        while not ok:
+            try:
+                num = float(input(f"Insert probability betweeen {start} and {end}\n"))
+                if num in [x * .1 for x in range(11)]:
+                    ok = True
+            except ValueError:
+                print(f"Remember, only floats betweeen {start} and {end}!")
+        return num
+
+
+    def getInteger(warning):
         ok = False
         num = 0
         while not ok:
@@ -27,7 +32,7 @@ if __name__ == '__main__':
                 num = int(input("Insert option\n"))
                 ok = True
             except ValueError:
-                print("Remember, only integers!")
+                print(f"Remember, {warning}!")
         return num
 
 
@@ -36,7 +41,7 @@ if __name__ == '__main__':
         ext_str="EXIT"
         while not exited:
             print(header)
-            opt = getInteger()
+            opt = getInteger('only integers')
             if opt in options:
                 if options[opt] == ext_str:
                     exited = True
@@ -47,11 +52,11 @@ if __name__ == '__main__':
                 print(f"Valid choices: {options}")
         print("END")
     ####################WORK FROM THIS POINT##########################
-    myOpt = menu(thisdict, welcomeS)
-    if myOpt==1:
-        newOpt = float(menu(prob, probS))
-        print(f"Selected probability is {newOpt}\n")
-        st = Utils.getChessInstancePosition(newOpt, 100, 0)
+    optIn = menu(mainMenu, welcomeS)
+    if optIn==1:
+        prob = getFloat(0,1)
+        print(f"Selected probability is {prob}\n")
+        st = Utils.getChessInstancePosition(prob, 100, 0)
         print(st.m_board)
         st.reloadPositions()
         Utils.printBoard(st)
