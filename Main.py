@@ -7,7 +7,7 @@ if __name__ == '__main__':
 
     def getStatePredefined(prob, seed, turn):
         state = Utils.getChessInstancePosition(prob, seed, turn)
-        state.m_board[2][7] = 10
+        state.m_board[0][3] = 4
         state.m_board[4][7] = 10
 
         return state
@@ -21,18 +21,18 @@ if __name__ == '__main__':
         final = False
         while maxMoves >0 and not final:
             v, m = (MiniMax(st, turn))
-
+            print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
             if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
                 final = True
             st = st.applyAction(m)
+            st.depth = 3
             Utils.printBoard(st)
             print(f"--------------{maxMoves}---------------\n\n\n")
-
             turn = (turn+1)%2
             maxMoves = maxMoves - 1
-    AIvsAI(5, 3, 0, 0)
+    AIvsAI(10, 303, 1, 0)
 
     '''
     st = getStatePredefined()
