@@ -69,8 +69,12 @@ def piezaFactory(value):
             return None
 
 def MiniMax (state, turn):
-    v, m = MaxValue(state, turn, None)
-    return v, m
+    if turn:
+        v, m = MinValue(state, turn, None)
+        return v, m
+    else:
+        v, m = MaxValue(state, turn, None)
+        return v, m
 
 
 

@@ -19,17 +19,20 @@ if __name__ == '__main__':
         Utils.printBoard(st)
         print("--------------------------------\n\n\n")
         final = False
-        while maxMoves >0 or not final:
+        while maxMoves >0 and not final:
             v, m = (MiniMax(st, turn))
+
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
+            if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
+                final = True
             st = st.applyAction(m)
             Utils.printBoard(st)
             print(f"--------------{maxMoves}---------------\n\n\n")
-            final = st.isFinal
+
             turn = (turn+1)%2
             maxMoves = maxMoves - 1
-    AIvsAI(5, 3, 1, 0)
+    AIvsAI(5, 3, 0, 0)
 
     '''
     st = getStatePredefined()
