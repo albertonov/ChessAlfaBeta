@@ -41,6 +41,7 @@ class State:
         #self.reloadPositions() # carga posiciones iniciales
 
 
+
     # hard copy of an State
     def copy(self, memodict={}):
         # print '__deepcopy__(%s)' % str(memo)
