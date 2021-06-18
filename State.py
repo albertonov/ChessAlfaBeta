@@ -68,8 +68,8 @@ class State:
         newState.id = self.id + 1
         pieceTaken = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
         myPiece = self.m_board[action.m_initPos.row][action.m_initPos.col]
-        if (pieceTaken == Utils.wKing) or (pieceTaken == Utils.bKing):
-            self.isFinal = True
+        if (pieceTaken == Utils.wKing) or (pieceTaken == Utils.bKing) :
+            newState.isFinal = True
         if pieceTaken != Utils.empty:
             eaten = True
         if myPiece in range (0,6):
@@ -77,14 +77,25 @@ class State:
         else:
             turn = 1 # Negras
 
+
         newState.updateList(turn, eaten, action)
+        # white hacia abajo black hacua arruba
+
         newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
-        newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = myPiece
+
+        if (myPiece == Utils.wPawn and action.m_finalPos.row == 7):
+            newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.wQueen
+        elif (myPiece == Utils.bPawn and action.m_finalPos.row == 0):
+            newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.bQueen
+        else:
+            newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = myPiece
+
+
         newState.depth = newState.depth - 1
         newInitPos = Position(action.m_initPos.row, action.m_initPos.col)
         newFinalPos = Position(action.m_finalPos.row, action.m_finalPos.col)
         newState.move = Action(newInitPos,newFinalPos)
-        newState.father = self
+        #newState.father = self
         #newState.reloadPositions()
 
         return newState

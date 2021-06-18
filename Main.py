@@ -7,9 +7,12 @@ if __name__ == '__main__':
 
     def getStatePredefined(prob, seed, turn):
         state = Utils.getChessInstancePosition(prob, seed, turn)
-        state.m_board[0][3] = 4
-        state.m_board[4][7] = 10
 
+
+
+
+        #state.m_board[4][7] = 10
+        #state = Utils.getChessInstance(prob, seed, turn)
         return state
 
     def AIvsAI(maxMoves, seed, turn, prob):
@@ -20,6 +23,8 @@ if __name__ == '__main__':
         print("--------------------------------\n\n\n")
         final = False
         while maxMoves >0 and not final:
+            if (maxMoves == 47) :
+                pass
             v, m = (MiniMax(st, turn))
             print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
@@ -32,7 +37,7 @@ if __name__ == '__main__':
             print(f"--------------{maxMoves}---------------\n\n\n")
             turn = (turn+1)%2
             maxMoves = maxMoves - 1
-    AIvsAI(10, 303, 1, 0)
+    AIvsAI(50, 656, 1, 0.3)
 
     '''
     st = getStatePredefined()

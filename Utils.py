@@ -171,7 +171,7 @@ def getChessInstancePosition(p, seed, turn):
 
 
 
-def getChessInstance(p, seed, agent):
+def getChessInstance(p, seed, turn):
     n = 8
     board = [[empty for i in range(n)] for j in range(n)]
 
@@ -206,7 +206,7 @@ def getChessInstance(p, seed, agent):
     board[n - 1][4] = bQueen
 
     # Creating the instance, i.e., the state
-    state = State(board)
+    state = State(board, turn)
     return state
 
 

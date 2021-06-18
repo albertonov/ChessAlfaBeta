@@ -32,7 +32,7 @@ class Pawn(Piece):
             if r <= 6:
                 if state.m_board[r + 1][c] == Utils.empty:  # standard pawn move
                     l.append(Action(state.m_agentPos, Position(r + 1, c)))
-                if r == 1 and (state.m_board[r + 2][c] == Utils.empty):  # starting pawn move
+                if r == 1 and (state.m_board[r + 2][c] == Utils.empty) and (state.m_board[r + 1][c] == Utils.empty):  # starting pawn move
                     l.append(Action(state.m_agentPos, Position(r + 2, c)))
 
                 if c > 0 and (state.m_board[r + 1][c - 1] != Utils.empty) and (
@@ -48,7 +48,7 @@ class Pawn(Piece):
             if r >=1:
                 if state.m_board[r - 1][c] == Utils.empty:  # standard pawn move
                     l.append(Action(state.m_agentPos, Position(r - 1, c)))
-                if r == 6 and (state.m_board[r - 2][c] == Utils.empty):  # starting pawn move
+                if r == 6 and (state.m_board[r - 2][c] == Utils.empty) and (state.m_board[r - 1][c] == Utils.empty):  # starting pawn move
                     l.append(Action(state.m_agentPos, Position(r - 2, c)))
 
                 if c > 0 and (state.m_board[r - 1][c - 1] != Utils.empty) and (

@@ -11,9 +11,9 @@ class Queen(Piece):
         self.m_color = color
 
         if color == 0:
-            self.m_type = Utils.wRook
+            self.m_type = Utils.wQueen
         else:
-            self.m_type = Utils.bRook
+            self.m_type = Utils.bQueen
 
     # this method must be completed with all the possible pieces
     def getPossibleActions(self, state):

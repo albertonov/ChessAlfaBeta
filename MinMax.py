@@ -89,6 +89,7 @@ def MinValue(state, turn,m):
         if act_v<v:
             v = act_v
             m = st.move
+
     return v,m
 def MaxValue(state, turn,m):
     turn = (turn+1)%2
@@ -101,6 +102,7 @@ def MaxValue(state, turn,m):
         if act_v>v:
             v = act_v
             m = st.move
+
     return v,m
 
 
