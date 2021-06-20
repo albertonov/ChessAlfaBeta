@@ -6,6 +6,14 @@ import sys
 import random
 from Position import Position
 from State import State
+from Rook import Rook
+from Knight import Knight
+from Pawn import Pawn
+from King import King
+from Bishop import Bishop
+from Queen import Queen
+from Position import Position
+import copy
 
 # all the pieces
 wPawn = 0
@@ -30,7 +38,8 @@ diffPieces = 12
 names = ["wPawn", "wRook", "wBishop", "wkNnight", "wQueen", "wKing", "bPawn", "bRook", "bBishop", "bkNightight",
          "bQueen", "bKing"]
 letters = ["P", "R", "B", "N", "Q", "K", "p", "r", "b", "n", "q", "k", " "]
-
+valueNames = {0:"wPawn", 1:"wRook", 2:"wBishop", 3:"wkNnight", 4:"wQueen", 5:"wKing", 6:"bPawn", 7:"bRook", 8:"bBishop", 9:"bkNightight",
+         10:"bQueen", 11:"bKing"}
 
 # Note we use h for Horse instead of Knight
 # Note we add " " for empty cell
@@ -139,6 +148,46 @@ def getHeuristic(state):
     return heuristic
 
 
+def getStates(x,y,state):
+    stateList = []
+    value = state.m_board[x][y]
+    pieza = piezaFactory(value)
+    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
+    modState.m_agentPos = Position(x, y)
+    actions = pieza.getPossibleActions(modState)
+    for each in actions:
+        stateList.append(modState.applyAction(each))
+    return stateList
+
+
+
+def piezaFactory(value):
+        if value == wPawn:
+            return Pawn(0)
+        elif value == bPawn:
+            return Pawn(1)
+        elif value == wRook:
+            return Rook(0)
+        elif value == bRook:
+            return Rook(1)
+        elif value == wKing:
+            return King(0)
+        elif value == bKing:
+            return King(1)
+        elif value == wQueen:
+            return Queen(0)
+        elif value == bQueen:
+            return Queen(1)
+        elif value == wBishop:
+            return  Bishop(0)
+        elif value == bBishop:
+            return Bishop(1)
+        elif value == wKnight:
+            return Knight(0)
+        elif value == bKnight:
+            return Knight(1)
+        else:
+            return None
 
 def getChessInstancePosition(p, seed, turn):
     numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
