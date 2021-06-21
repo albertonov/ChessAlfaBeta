@@ -3,8 +3,6 @@ import sys
 
 import Utils
 from MinMax import MiniMax
-import os
-
 from Position import Position
 
 if __name__ == '__main__':
@@ -35,7 +33,7 @@ if __name__ == '__main__':
         print("--------------------------------\n\n\n")
         final = False
         while maxMoves >0 and not final:
-            v, m = (MiniMax(st, turn))
+            v, m, gen, exp = (MiniMax(st, turn))
             print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
@@ -54,7 +52,8 @@ if __name__ == '__main__':
             print("Ganan Negras")
         else:
             print("Tablas")
-
+        print(f"Generados: {gen}")
+        print(f"Expandidos: {exp}")
 
     def makeMovement(state, turn):
         if turn:
@@ -122,7 +121,7 @@ if __name__ == '__main__':
                 print("Humano gana")
                 break
             #turno agente
-            v, m = (MiniMax(st, turn))
+            v, m, gen, exp = (MiniMax(st, turn))
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
             if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
@@ -131,11 +130,15 @@ if __name__ == '__main__':
             st.depth = 3
             Utils.printBoard(st)
             print(f"-----------------------------\n\n\n")
+        print(f"Generados: {gen}")
+        print(f"Expandidos: {exp}")
 
 
 
     #humanvsAI(927, 0, 0.1, False)
-    AIvsAI(100, 6386, 0, 0.2, False)
+    AIvsAI(10, 100, 0, 0.2, False)
+
+
 
     '''
     st = getStatePredefined()

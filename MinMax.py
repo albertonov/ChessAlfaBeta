@@ -13,17 +13,30 @@ from Bishop import Bishop
 from Queen import Queen
 from Position import Position
 
+expanded = 0
+generated = 0
 
+def incrementExpanded(increment):
+    global expanded
+    expanded = expanded + increment
 
+def incrementGenerated(increment):
+    global generated
+    generated = generated + increment
 
 def Sucesores(state, turn):
+    incrementExpanded(1)
     newStates = []
     if(turn):                       #juegan blancas
         for pos in state.wElemList:
-            newStates.extend(getStates(pos[0],pos[1],state))
+            states = getStates(pos[0],pos[1],state)
+            incrementGenerated(len(states))
+            newStates.extend(states)
     else:                           #juegan negras
         for pos in state.bElemList:
-            newStates.extend(getStates(pos[0],pos[1],state))
+            states = getStates(pos[0], pos[1], state)
+            incrementGenerated(len(states))
+            newStates.extend(states)
     return newStates
 
 
@@ -69,12 +82,13 @@ def piezaFactory(value):
             return None
 
 def MiniMax (state, turn):
+    print(f"Dentro de MINIMAX ->{generated}, {expanded}")
     if turn:
         v, m = MinValue(state, turn, None)
-        return v, m
+        return v, m, generated, expanded
     else:
         v, m = MaxValue(state, turn, None)
-        return v, m
+        return v, m, generated, expanded
 
 
 
