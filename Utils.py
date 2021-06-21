@@ -214,6 +214,10 @@ def getChessInstancePosition(p, seed, turn):
             if (random.random() <= p):
                 r = random.randint(0, len(allPositions) - 1)
                 pos = allPositions.pop(r)
+                if piece == wPawn and pos.row == 7:
+                    piece = wQueen
+                elif piece == bPawn and pos.row == 0:
+                    piece = bQueen
                 board[pos.row][pos.col] = piece
 
     return State(board, turn)

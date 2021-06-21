@@ -110,12 +110,6 @@ if __name__ == '__main__':
             st = Utils.getChessInstance(prob, seed, turn)
         else:
             st = getStatePredefined(prob, seed, turn)
-        if (turn):
-            turnoHumano = 0
-            turnoMaquina = 1
-        else:
-            turnoHumano = 1
-            turnoMaquina = 0
         st.reloadPositions()
         print(f"INITIAL")
         Utils.printBoard(st)
@@ -141,7 +135,7 @@ if __name__ == '__main__':
 
 
     #humanvsAI(927, 0, 0.1, False)
-    AIvsAI(100, 927, 0, 0.1, False)
+    AIvsAI(100, 6386, 0, 0.2, False)
 
     '''
     st = getStatePredefined()
