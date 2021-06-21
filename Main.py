@@ -2,6 +2,7 @@
 import sys
 
 import Utils
+from AlfaBeta import AlfaBeta
 from MinMax import MiniMax
 from Position import Position
 
@@ -33,7 +34,7 @@ if __name__ == '__main__':
         print("--------------------------------\n\n\n")
         final = False
         while maxMoves >0 and not final:
-            v, m, gen, exp = (MiniMax(st, turn))
+            v, m, gen, exp = (AlfaBeta(st, turn))
             print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
@@ -78,8 +79,6 @@ if __name__ == '__main__':
             state.depth = 3
             Utils.printBoard(state)
             return state
-
-            a = 0
 
         else:
             i = 1
@@ -136,7 +135,7 @@ if __name__ == '__main__':
 
 
     #humanvsAI(927, 0, 0.1, False)
-    AIvsAI(10, 100, 0, 0.2, False)
+    AIvsAI(100, 123, 0, 0.2, False)
 
 
 
