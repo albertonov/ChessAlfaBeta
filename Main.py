@@ -2,7 +2,7 @@
 import sys
 
 import Utils
-from AlfaBeta import AlfaBeta
+from AlfaBeta import alfa_beta
 from MinMax import MiniMax
 from Position import Position
 
@@ -34,7 +34,7 @@ if __name__ == '__main__':
         print("--------------------------------\n\n\n")
         final = False
         while maxMoves >0 and not final:
-            v, m, gen, exp = (AlfaBeta(st, turn))
+            v, m, gen, exp = (alfa_beta(st, turn))
             print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")

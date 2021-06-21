@@ -113,21 +113,15 @@ def getAllBoardPositions(n):
 def printBoard(state):
     # DecimalFormat df = new DecimalFormat("00");
     size = state.m_boardSize
-    # if (size>50):
-    #	print("**Error, board too large to be text-printed ...\n")
-    #	sys.exit(0)
-
     # upper row
     print("   ", end="")
     for c in range(size):
         print("% 2d " % (c), end="")
     print("")
-
     print("  ", end="")
     for c in range(size):
         print("---", end="")
     print("--")
-
     # board
     for r in range(size):
         print("% 2d|" % (r), end="")
@@ -140,15 +134,7 @@ def printBoard(state):
         print("--")
 
 
-
-def getHeuristic(state):
-    size = state.m_boardSize
-    heuristic = [[size - j -1 for i in range(size)] for j in range(size)]
-
-    return heuristic
-
-
-def getStates(x,y,state):
+def get_states(x, y, state):
     stateList = []
     value = state.m_board[x][y]
     pieza = piezaFactory(value)
@@ -205,23 +191,21 @@ def getChessInstancePosition(p, seed, turn):
     r = random.randint(0, n*n - 1)
     bkingPos = allPositions.pop(r)
     board[bkingPos.row][bkingPos.col] = bKing
-
     numPieces[bKing] -=1
 
     pos = None
     for piece in range(diffPieces):
         for j in range(numPieces[piece]):
-            if (random.random() <= p):
+            if random.random() <= p:
                 r = random.randint(0, len(allPositions) - 1)
                 pos = allPositions.pop(r)
+                # promote any piece to Queen if spawned on opposite side
                 if piece == wPawn and pos.row == 7:
                     piece = wQueen
                 elif piece == bPawn and pos.row == 0:
                     piece = bQueen
                 board[pos.row][pos.col] = piece
-
     return State(board, turn)
-
 
 
 def getChessInstance(p, seed, turn):
@@ -261,12 +245,3 @@ def getChessInstance(p, seed, turn):
     # Creating the instance, i.e., the state
     state = State(board, turn)
     return state
-
-
-# main to test the methods
-
-if __name__ == '__main__':
-    st = getProblemInstance(8, 1.0, 1771, wRook)
-    print(st.m_board)
-
-    printBoard(st)
