@@ -110,7 +110,12 @@ if __name__ == '__main__':
             st = Utils.getChessInstance(prob, seed, turn)
         else:
             st = getStatePredefined(prob, seed, turn)
-
+        if (turn):
+            turnoHumano = 0
+            turnoMaquina = 1
+        else:
+            turnoHumano = 1
+            turnoMaquina = 0
         st.reloadPositions()
         print(f"INITIAL")
         Utils.printBoard(st)
@@ -119,13 +124,11 @@ if __name__ == '__main__':
         while not final:
             #turno jugador
             st = makeMovement(st, turn)
-            #turn = (turn+1)%2
             if (st.isFinal):
                 print("Humano gana")
                 break
             #turno agente
             v, m = (MiniMax(st, turn))
-            print(f"Turn is {turn}")
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
             if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
@@ -134,11 +137,10 @@ if __name__ == '__main__':
             st.depth = 3
             Utils.printBoard(st)
             print(f"-----------------------------\n\n\n")
-            turn = (turn+1)%2
 
 
 
-    humanvsAI(927, 0, 0.1, False)
+    #humanvsAI(927, 0, 0.1, False)
     AIvsAI(100, 927, 0, 0.1, False)
 
     '''
