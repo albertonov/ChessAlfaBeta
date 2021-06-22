@@ -46,7 +46,7 @@ def getStates(x,y,state):
     pieza = piezaFactory(value)
     modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
     modState.m_agentPos = Position(x, y)
-    actions = pieza.getPossibleActions(modState)
+    actions = pieza.get_possible_actions(modState)
     for each in actions:
         stateList.append(modState.applyAction(each))
     return stateList
@@ -124,10 +124,10 @@ def MaxValue(state, turn,m):
 # main to test the methods
 
 if __name__ == '__main__':
-    st = Utils.getChessInstancePosition(0.2, 100, 0)
+    st = Utils.get_chess_instance_position(0.2, 100, 0)
     print(st.m_board)
     st.reloadPositions()
-    Utils.printBoard(st)
+    Utils.print_board(st)
 
 
     v, m = (MiniMax(st, 0))

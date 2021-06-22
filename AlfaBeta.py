@@ -52,7 +52,7 @@ def get_states(x, y, state):
     # make sure it is a different state
     mod_state = copy.deepcopy(state)
     mod_state.m_agentPos = Position(x, y)
-    actions = piece.getPossibleActions(mod_state)
+    actions = piece.get_possible_actions(mod_state)
     for each in actions:
         state_list.append(mod_state.applyAction(each))
     return state_list

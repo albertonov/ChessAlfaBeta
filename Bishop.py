@@ -2,11 +2,8 @@ import Utils
 from Piece import Piece
 
 
-# this class implements the getPossibleActions for each type of piece
-
 class Bishop(Piece):
 
-    # constructor
     def __init__(self, color):
         self.m_color = color
 
@@ -15,12 +12,10 @@ class Bishop(Piece):
         else:
             self.m_type = Utils.bBishop
 
-    # this method must be completed with all the possible pieces
-    def getPossibleActions(self, state):
+    def get_possible_actions(self, state):
         l = []
-
-        l = self.getDiagonalDownRightMoves(state)
-        l += self.getDiagonalDownLeftMoves(state)
-        l += self.getDiagonalUpLeftMoves(state)
-        l += self.getDiagonalUpRightMoves(state)
+        l += self.get_diagonal_down_right_moves(state)
+        l += self.get_diagonal_down_left_moves(state)
+        l += self.get_diagonal_up_left_moves(state)
+        l += self.get_diagonal_up_right_moves(state)
         return l

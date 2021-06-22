@@ -1,10 +1,5 @@
-# import java.text.DecimalFormat;
-# import java.util.ArrayList;
-# import java.util.Random;
-
 import sys
 import random
-from Position import Position
 from State import State
 from Rook import Rook
 from Knight import Knight
@@ -33,22 +28,23 @@ empty = 12
 # number of pieces
 diffPieces = 12
 
-
 # name (and letter) of each piece
 names = ["wPawn", "wRook", "wBishop", "wkNnight", "wQueen", "wKing", "bPawn", "bRook", "bBishop", "bkNightight",
          "bQueen", "bKing"]
 letters = ["P", "R", "B", "N", "Q", "K", "p", "r", "b", "n", "q", "k", " "]
-valueNames = {0:"wPawn", 1:"wRook", 2:"wBishop", 3:"wkNnight", 4:"wQueen", 5:"wKing", 6:"bPawn", 7:"bRook", 8:"bBishop", 9:"bkNightight",
-         10:"bQueen", 11:"bKing"}
+valueNames = {0: "wPawn", 1: "wRook", 2: "wBishop", 3: "wkNnight", 4: "wQueen", 5: "wKing", 6: "bPawn", 7: "bRook",
+              8: "bBishop", 9: "bkNightight",
+              10: "bQueen", 11: "bKing"}
+
 
 # Note we use h for Horse instead of Knight
 # Note we add " " for empty cell
 
 # Get color piece
-def getColorPiece(piece):
-    if ((piece >= 0) and (piece <= 5)):
+def get_color_piece(piece):
+    if (piece >= 0) and (piece <= 5):
         return 0  # white
-    elif ((piece > 5) and (piece <= 11)):
+    elif (piece > 5) and (piece <= 11):
         return 1  # black
     else:
         print("\n** Error, wrong piece code\n")
@@ -56,53 +52,12 @@ def getColorPiece(piece):
     return -1  # never arrives here, just to avoid compilation error
 
 
-# This method generates a problem instance.
-# @param n size of the board
-# @param p probability for each piece to be included
-# @param seed to initiate the random generator (for reproducibility)
-# @param agent the type of piece who will "play" the game (always white)
-# @return the initial state (board and agent)
-
-def getProblemInstance(n, p, seed, turn):
-    numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
-    board = [[empty for i in range(n)] for j in range(n)]
-
-    random.seed(seed)
-
-    # adjusting the number of possible  pieces according to board's size
-    f = (n * n) / 64.0
-
-    for i in range(len(numPieces)):
-        numPieces[i] = round(numPieces[i] * f)
-
-    #numPieces[agent] -= 1
-    allPositions = getAllBoardPositions(n)
-
-    # placing our agent in the first row, we know these are the first n elements in allPositions
-    r = random.randint(0, n - 1)
-    agentPos = allPositions.pop(r)
-    #board[agentPos.row][agentPos.col] = agent
-
-    # placing the rest of pieces
-    pos = None
-    for piece in range(diffPieces):
-        for j in range(numPieces[piece]):
-            if (random.random() <= p):
-                r = random.randint(0, len(allPositions) - 1)
-                pos = allPositions.pop(r)
-                board[pos.row][pos.col] = piece
-
-    # Creating the instance, i.e., the state
-    return State(board, turn)
-
-
-#
 # fill (by rows) an ArrayList with all the possible coordinates
 #
 # @param n size of the board
 #
 
-def getAllBoardPositions(n):
+def get_all_board_positions(n):
     return [Position(r, c) for r in range(n) for c in range(n)]
 
 
@@ -110,8 +65,7 @@ def getAllBoardPositions(n):
 # Print a state (board + agent)
 #
 
-def printBoard(state):
-    # DecimalFormat df = new DecimalFormat("00");
+def print_board(state):
     size = state.m_boardSize
     # upper row
     print("   ", end="")
@@ -127,7 +81,7 @@ def printBoard(state):
         print("% 2d|" % (r), end="")
         for c in range(size):
             print(" " + letters[state.m_board[r][c]] + "|", end="")
-        # botton row
+        # bottom row
         print("  ")
         for c in range(size):
             print("---", end="")
@@ -135,70 +89,69 @@ def printBoard(state):
 
 
 def get_states(x, y, state):
-    stateList = []
+    state_list = []
     value = state.m_board[x][y]
-    pieza = piezaFactory(value)
-    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
-    modState.m_agentPos = Position(x, y)
-    actions = pieza.getPossibleActions(modState)
+    piece = piece_factory(value)
+    mod_state = copy.deepcopy(state)  # state hard copy, ready to be modified
+    mod_state.m_agentPos = Position(x, y)
+    actions = piece.get_possible_actions(mod_state)
     for each in actions:
-        stateList.append(modState.applyAction(each))
-    return stateList
+        state_list.append(mod_state.applyAction(each))  # makes its own copy
+    return state_list
 
 
+def piece_factory(value):
+    if value == wPawn:
+        return Pawn(0)
+    elif value == bPawn:
+        return Pawn(1)
+    elif value == wRook:
+        return Rook(0)
+    elif value == bRook:
+        return Rook(1)
+    elif value == wKing:
+        return King(0)
+    elif value == bKing:
+        return King(1)
+    elif value == wQueen:
+        return Queen(0)
+    elif value == bQueen:
+        return Queen(1)
+    elif value == wBishop:
+        return Bishop(0)
+    elif value == bBishop:
+        return Bishop(1)
+    elif value == wKnight:
+        return Knight(0)
+    elif value == bKnight:
+        return Knight(1)
+    else:
+        return None
 
-def piezaFactory(value):
-        if value == wPawn:
-            return Pawn(0)
-        elif value == bPawn:
-            return Pawn(1)
-        elif value == wRook:
-            return Rook(0)
-        elif value == bRook:
-            return Rook(1)
-        elif value == wKing:
-            return King(0)
-        elif value == bKing:
-            return King(1)
-        elif value == wQueen:
-            return Queen(0)
-        elif value == bQueen:
-            return Queen(1)
-        elif value == wBishop:
-            return  Bishop(0)
-        elif value == bBishop:
-            return Bishop(1)
-        elif value == wKnight:
-            return Knight(0)
-        elif value == bKnight:
-            return Knight(1)
-        else:
-            return None
 
-def getChessInstancePosition(p, seed, turn):
-    numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
+def get_chess_instance_position(p, seed, turn):
+    num_pieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
 
     n = 8
     board = [[empty for i in range(n)] for j in range(n)]
     random.seed(seed)
 
-    allPositions = getAllBoardPositions(n)
+    all_positions = get_all_board_positions(n)
     # placing the two kings in random position
-    r = random.randint(0, n*n)
-    wkingPos = allPositions.pop(r)
-    board[wkingPos.row][wkingPos.col] = wKing
-    numPieces[wKing] -= 1
-    r = random.randint(0, n*n - 1)
-    bkingPos = allPositions.pop(r)
-    board[bkingPos.row][bkingPos.col] = bKing
-    numPieces[bKing] -=1
+    r = random.randint(0, n * n)
+    w_king_pos = all_positions.pop(r)
+    board[w_king_pos.row][w_king_pos.col] = wKing
+    num_pieces[wKing] -= 1
+    r = random.randint(0, n * n - 1)
+    b_king_pos = all_positions.pop(r)
+    board[b_king_pos.row][b_king_pos.col] = bKing
+    num_pieces[bKing] -= 1
 
-    pos = None
     for piece in range(diffPieces):
-        for j in range(numPieces[piece]):
+        for j in range(num_pieces[piece]):
             if random.random() <= p:
-                r = random.randint(0, len(allPositions) - 1)
-                pos = allPositions.pop(r)
+                r = random.randint(0, len(all_positions) - 1)
+                pos = all_positions.pop(r)
                 # promote any piece to Queen if spawned on opposite side
                 if piece == wPawn and pos.row == 7:
                     piece = wQueen
@@ -208,12 +161,10 @@ def getChessInstancePosition(p, seed, turn):
     return State(board, turn)
 
 
-def getChessInstance(p, seed, turn):
+def get_chess_instance(p, seed, turn):
     n = 8
     board = [[empty for i in range(n)] for j in range(n)]
-
     random.seed(seed)
-
     # Number of possible pieces according to board's size
     f = 32
 
@@ -232,7 +183,6 @@ def getChessInstance(p, seed, turn):
     board[0][4] = wQueen
 
     # black pieces
-
     board[n - 1][0] = bRook
     board[n - 1][1] = bKnight
     board[n - 1][2] = bBishop

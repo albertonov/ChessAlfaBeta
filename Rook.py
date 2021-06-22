@@ -2,11 +2,8 @@ import Utils
 from Piece import Piece
 
 
-# this class implements the getPossibleActions for each type of piece
-
 class Rook(Piece):
 
-    # constructor
     def __init__(self, color):
         self.m_color = color
 
@@ -15,13 +12,12 @@ class Rook(Piece):
         else:
             self.m_type = Utils.bRook
 
-    # this method must be completed with all the possible pieces
-    def getPossibleActions(self, state):
+    def get_possible_actions(self, state):
         l = []
 
-        l = self.getHorizontalLeftMoves(state)
-        l += self.getHorizontalRightMoves(state)
-        l += self.getVerticalDownMoves(state)
-        l += self.getVerticalUpMoves(state)
+        l += self.get_horizontal_left_moves(state)
+        l += self.get_horizontal_right_moves(state)
+        l += self.get_vertical_down_moves(state)
+        l += self.get_vertical_up_moves(state)
 
         return l
