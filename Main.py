@@ -1,5 +1,6 @@
 # main to test the methods
 import sys
+import time
 
 import Utils
 from AlfaBeta import AlfaBeta
@@ -7,54 +8,6 @@ from MinMax import MiniMax
 from Position import Position
 
 if __name__ == '__main__':
-    '''
-    method = str(sys.argv[1])
-    inicio = bool(sys.argv[2])
-    profundidad = int(sys.argv[3])
-    color = str(sys.argv[4])
-    maxJugadas = int(sys.argv[5])
-    prob = float(sys.argv[6])
-    seed = int(sys.argv[7])
-    '''
-
-
-
-    def getStatePredefined(prob, seed, turn):
-        state = Utils.getChessInstancePosition(prob, seed, turn)
-        return state
-
-    def AIvsAI(maxMoves, seed, turn, prob, initial):
-        if (initial):
-            st = Utils.getChessInstance(prob, seed, turn)
-        else:
-            st = getStatePredefined(prob, seed, turn)
-        st.reloadPositions()
-        print(f"INITIAL")
-        Utils.printBoard(st)
-        print("--------------------------------\n\n\n")
-        final = False
-        while maxMoves >0 and not final:
-            v, m, gen, exp = (AlfaBeta(st, turn))
-            print(f"Turn is {turn}")
-            print(f"Evaluation value is {v}")
-            print(f"Action is ${m}")
-            if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
-                final = True
-            st = st.applyAction(m)
-            st.depth = 3
-            Utils.printBoard(st)
-            print(f"--------------{maxMoves}---------------\n\n\n")
-            turn = (turn+1)%2
-            maxMoves = maxMoves - 1
-
-        if (v > 0):
-            print("Ganan Blancas")
-        elif (v < 0):
-            print("Ganan Negras")
-        else:
-            print("Tablas")
-        print(f"Generados: {gen}")
-        print(f"Expandidos: {exp}")
 
     def makeMovement(state, turn):
         if turn:
@@ -103,12 +56,52 @@ if __name__ == '__main__':
             a = 0
 
 
-    def humanvsAI(seed, turn, prob, initial):
+    def AIvsAI(maxMoves, seed, turn, prob, initial, prof, method):
+        print("AIVSAI" + str(initial))
         if (initial):
-            st = Utils.getChessInstance(prob, seed, turn)
+            st = Utils.getChessInstance(prob, seed, turn, prof)
         else:
-            st = getStatePredefined(prob, seed, turn)
-        st.reloadPositions()
+            st = Utils.getChessInstancePosition(prob, seed, turn, prof)
+        st.crearListas()
+        Utils.printBoard(st)
+        print("--------------------------------\n\n\n")
+        final = False
+        while maxMoves >0 and not final:
+            if (method == "alphabeta"):
+                v, m, gen, exp = (AlfaBeta(st, turn))
+            else:
+                v, m, gen, exp = (MiniMax(st, turn))
+            print(f"Turn is {turn}")
+            print(f"Evaluation value is {v}")
+            print(f"Action is ${m} " + str(st.isFinal))
+
+            st = st.applyAction(m)
+            st.depth = prof
+            if (st.isFinal):
+                final = True
+            Utils.printBoard(st)
+            print(f"-----------------------------------\n\n\n")
+            turn = (turn+1)%2
+            maxMoves = maxMoves - 1
+
+        if (v > 0):
+            print("Ganan Blancas")
+        elif (v < 0):
+            print("Ganan Negras")
+        else:
+            print("Tablas")
+        print(f"Generados: {gen}")
+        print(f"Expandidos: {exp}")
+
+
+
+    def humanvsAI(seed, turn, prob, initial, prof, method):
+        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+        if (initial):
+            st = Utils.getChessInstance(prob, seed, turn, prof)
+        else:
+            st = Utils.getChessInstancePosition(prob, seed, turn, prof)
+        st.crearListas()
         print(f"INITIAL")
         Utils.printBoard(st)
         print("--------------------------------\n\n\n")
@@ -120,13 +113,16 @@ if __name__ == '__main__':
                 print("Humano gana")
                 break
             #turno agente
-            v, m, gen, exp = (MiniMax(st, turn))
+            if (method == "alphabeta"):
+                v, m, gen, exp = (AlfaBeta(st, turn))
+            else:
+                v, m, gen, exp = (MiniMax(st, turn))
             print(f"Evaluation value is {v}")
             print(f"Action is ${m}")
-            if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5  or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11):
-                final = True
             st = st.applyAction(m)
-            st.depth = 3
+            if (st.isFinal):
+                final = True
+            st.depth = prof
             Utils.printBoard(st)
             print(f"-----------------------------\n\n\n")
         print(f"Generados: {gen}")
@@ -134,18 +130,44 @@ if __name__ == '__main__':
 
 
 
-    #humanvsAI(927, 0, 0.1, False)
-    AIvsAI(100, 123, 0, 0.2, False)
+    #humanvsAI(927, 0, 0.1, True, 3)
+    #AIvsAI(100, 123123, 0, 0.1, False, 3, "alphabeta" )
 
 
 
-    '''
-    st = getStatePredefined()
-    print(st.m_board)
-    st.reloadPositions()
-    Utils.printBoard(st)
-    v, m = (MiniMax(st, st.turn))
-    print(f"Evaluation value is {v}")
-    print(f"Action is ${m}")
-    '''
+    method = str(sys.argv[1])
+    inicio = str(sys.argv[2])
+    profundidad = int(sys.argv[3])
+    color = str(sys.argv[4])
+    maxJugadas = int(sys.argv[5])
+    prob = float(sys.argv[6])
+    seed = int(sys.argv[7])
+
+    if (inicio == "False"):
+        initial = False
+    if (inicio == "True"):
+        initial = True
+
+    start = time.time()
+
+
+    if (color == "white"):
+        print("White enemy")
+        humanvsAI(seed, 0, prob, initial, profundidad, method)
+
+    elif (color == "black"):
+        humanvsAI(seed, 1, prob, initial, profundidad, method)
+
+    elif (color == "todo"):
+        whoStarts = int(sys.argv[8])
+        print(initial)
+        AIvsAI(maxJugadas, seed, whoStarts, prob, initial, profundidad, method)
+
+    elif (color == "dummy"):
+        pass
+
+    end = time.time()
+    print(f"Tiempo total {round(end - start, 4)} segundos")
+
+
 

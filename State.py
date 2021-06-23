@@ -21,12 +21,11 @@ class State:
     m_agentPos = -1
     turn = -1
     move = None
-
     valorFinal = 0
     father = None
 
     # constructor
-    def __init__(self, board, turn):
+    def __init__(self, board, turn, prof):
         self.m_board = board
         self.turn = turn
         if (self.m_agentPos > 11):
@@ -38,20 +37,19 @@ class State:
         self.m_boardSize = len(board[0])
         self.wElemList = []
         self.bElemList = []
-        #self.reloadPositions() # carga posiciones iniciales
+        self.depth = prof
+        #self.crearListas() # carga posiciones iniciales
 
 
 
     # hard copy of an State
     def copy(self, memodict={}):
-        # print '__deepcopy__(%s)' % str(memo)
         newState = State(self.m_board, self.turn)
         newState.__dict__.update(self.__dict__)
-        newState.m_board = copy.deepcopy(self.m_board, memodict)
-        newState.m_agentPos = copy.deepcopy(self.m_agentPos, memodict)
-        #newState.m_color = copy.deepcopy(self.m_color, memodict)
         newState.m_boardSize = copy.deepcopy(self.m_boardSize, memodict)
         newState.wElemList = copy.deepcopy(self.wElemList, memodict)
+        newState.m_board = copy.deepcopy(self.m_board, memodict)
+        newState.m_agentPos = copy.deepcopy(self.m_agentPos, memodict)
         newState.bElemList = copy.deepcopy(self.bElemList, memodict)
         newState.turn = copy.deepcopy(self.turn, memodict)
         newState.move = copy.deepcopy(self.move, memodict)
@@ -63,44 +61,49 @@ class State:
 
     def applyAction(self, action):
         turn = -1
-        eaten = False
+        captura = False
         newState = copy.deepcopy(self)
         newState.id = self.id + 1
-        pieceTaken = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
-        myPiece = self.m_board[action.m_initPos.row][action.m_initPos.col]
-        if (pieceTaken == Utils.wKing) or (pieceTaken == Utils.bKing) :
+        piezaCapturada = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
+        pieza = self.m_board[action.m_initPos.row][action.m_initPos.col]
+        if (piezaCapturada == Utils.wKing) or (piezaCapturada == Utils.bKing) :
             newState.isFinal = True
-        if pieceTaken != Utils.empty:
-            eaten = True
-        if myPiece in range (0,6):
-            turn = 0 # Blancas
+        if piezaCapturada != Utils.empty:
+            captura = True
+
+
+        if pieza <= 5 and pieza >= 0:
+            newState.wElemList.remove((action.m_initPos.row, action.m_initPos.col))
+            newState.wElemList.append((action.m_finalPos.row, action.m_finalPos.col))
+            if captura:
+                newState.bElemList.remove((action.m_finalPos.row, action.m_finalPos.col))
+
         else:
-            turn = 1 # Negras
+            newState.bElemList.remove((action.m_initPos.row, action.m_initPos.col))
+            newState.bElemList.append((action.m_finalPos.row, action.m_finalPos.col))
+            if captura:
+                newState.wElemList.remove((action.m_finalPos.row, action.m_finalPos.col))
+    
 
-
-        newState.updateList(turn, eaten, action)
-        # white hacia abajo black hacua arruba
 
         newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
 
-        if (myPiece == Utils.wPawn and action.m_finalPos.row == 7):
+        if (pieza == Utils.wPawn and action.m_finalPos.row == 7):
             newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.wQueen
-        elif (myPiece == Utils.bPawn and action.m_finalPos.row == 0):
+        elif (pieza == Utils.bPawn and action.m_finalPos.row == 0):
             newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.bQueen
         else:
-            newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = myPiece
+            newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = pieza
 
 
         newState.depth = newState.depth - 1
         newInitPos = Position(action.m_initPos.row, action.m_initPos.col)
         newFinalPos = Position(action.m_finalPos.row, action.m_finalPos.col)
         newState.move = Action(newInitPos,newFinalPos)
-        #newState.father = self
-        #newState.reloadPositions()
 
         return newState
 
-    def reloadPositions(self):
+    def crearListas(self):
         self.wElemList.clear()
         self.bElemList.clear()
         for eachX in range(len(self.m_board)):
@@ -111,47 +114,135 @@ class State:
                     self.bElemList.append((eachX, eachY))#por la izqda, tupla
 
 
-    def updateList(self, turn, eaten, action):
-        if turn:#negras
-            self.bElemList.remove((action.m_initPos.row,action.m_initPos.col))
-            self.bElemList.append((action.m_finalPos.row,action.m_finalPos.col))
-            if eaten:
-                self.wElemList.remove((action.m_finalPos.row,action.m_finalPos.col))
-        elif not turn:#blancas
-            ElemToRemove = (action.m_initPos.row,action.m_initPos.col)
-            self.wElemList.remove((action.m_initPos.row,action.m_initPos.col))
-            self.wElemList.append((action.m_finalPos.row,action.m_finalPos.col))
-            if eaten:
-                self.bElemList.remove((action.m_finalPos.row,action.m_finalPos.col))
-
     def getEval(self):
+
+        bKnightEval =[  [50, 40, 30, 30, 30, 30, 40, 50],
+                        [40, 20,  0,  0,  0,  0, 20, 40],
+                        [30,  0,-10,-15,-15,-10,  0, 30],
+                        [30, -5,-15,-20,-20,-15, -5, 30],
+                        [30,  0,-15,-20,-20,-15,  0, 30],
+                        [30, -5,-10,-15,-15,-10, -5, 30],
+                        [40, 20,  0, -5, -5,  0, 20, 40],
+                        [50, 40, 30, 30, 30, 30, 40, 50]]
+
+        wKnightEval = [[-50,-40,-30,-30,-30,-30,-40,-50],
+                       [-40, -20, 0, 0, 0, 0, -20, -40],
+                       [-30, 5, 10, 15, 15, 10, 5, -30],
+                       [-30, 0, 15, 20, 20, 15, 0, -30],
+                       [-30, 5, 15, 20, 20, 15, 5, -30],
+                       [-30, 0, 10, 15, 15, 10, 0, -30],
+                       [-40, -20, 0, 5, 5, 0, -20, -40],
+                       [-50,-40,-30,-30,-30,-30,-40,-50]]
+
+        bQueenEval = [
+            [20, 10, 10,  5,  5, 10, 10, 20],
+            [10,  0,  0,  0,  0,  0,  0, 10],
+            [10,  0, -5, -5, -5, -5,  0, 10],
+            [5,   0, -5, -5, -5, -5,  0,  5],
+            [0,   0, -5, -5, -5, -5,  0,  5],
+            [10,  0, -5, -5, -5, -5,  0, 10],
+            [10,  0, -5,  0,  0,  0,  0, 10],
+            [20, 10, 10,  5,  5, 10, 10, 20]
+        ]
+
+
+        wQueenEval = [
+            [-20,-10,-10, -5, -5,-10,-10,  -20],
+            [-10, 0,  0,  0,  0,  0,   0,  -10],
+            [-10, 0,  5,  5,  5,  5,   0,  -10],
+            [-10, 0,  5,  5,  5,  5,   0,  -10],
+            [-10, 0,  5,  5,  5,  5,   0,  -10],
+            [-10, 0,  5,  5,  5,  5,   0,  -10],
+            [-10, 0,  0,  0,  0,  0,   0,  -10],
+            [-20,-10,-10,-5, -5, -10, -10, -20]
+        ]
+
+        wRookEval = [
+            [0,  0,  0,  0,  0,  0,  0,  0],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [-5,  0,  0,  0,  0,  0,  0,  -5],
+            [0,  0,  0,  0,  0,  0,  0,  0]]
+
+        bRookEval = [
+            [0,  0,  0,  0,  0,  0,  0,  0],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [5,  0,  0,  0,  0,  0,  0,  5],
+            [0,  0,  0,  0,  0,  0,  0,  0]
+        ]
+
+        bPawnEval = [
+            [0,     0,    0,   0,    0,    0,   0,   0],
+            [-50, -50,  -50, -50,  -50,  -50, -50, -50],
+            [-10, -10,  -20, -30,  -30,  -20, -10, -10],
+            [-5,   -5,  -10, -25,  -25,  -10,  -5,  -5],
+            [0,     0,    0, -20,  -20,    0,   0,   0],
+            [-5,    5,   10,   0,    0,   10,   5,  -5],
+            [-5,  -10,  -10,  20,   20,  -10, -10,  -5],
+            [0,     0,    0,   0,    0,    0,   0,   0]
+        ]
+
+
+        wPawnEval = [
+            [0,   0,   0,  0,   0,   0,  0,  0],
+            [5,  10,  10,-20, -20,  10, 10,  5],
+            [5,  -5, -10,  0,   0, -10, -5,  5],
+            [0,   0,   0, 20,  20,   0,  0,  0],
+            [5,   5,  10, 25,  25,  10,  5,  5],
+            [10, 10,  20, 30,  30,  20, 10, 10],
+            [50, 50,  50, 50,  50,  50, 50, 50],
+            [0,   0,   0,  0,   0,   0,  0,  0]
+        ]
+
+
 
         eval = 0
         valuePieces = {
-            0: +1,
-            1: +5,
-            2: +3,
-            3: +3,
-            4: +10,
-            5: +500,
-            6: -1,
-            7: -5,
-            8: -3,
-            9: -3,
-            10: -10,
-            11: -500
+            0: +100,
+            1: +500,
+            2: +330,
+            3: +320,
+            4: +900,
+            5: +20000,
+            6: -100,
+            7: -500,
+            8: -330,
+            9: -320,
+            10: -900,
+            11: -20000
         }
         for posX, posY in self.wElemList:
             numberPiece = self.m_board[posX][posY]
             eval += valuePieces[numberPiece]
+            if numberPiece == Utils.wKnight:
+                eval += wKnightEval[posX][posY]
+            elif numberPiece == Utils.wQueen:
+                eval += wQueenEval[posX][posY]
+            elif numberPiece == Utils.wRook:
+                eval += wRookEval[posX][posY]
+            elif numberPiece == Utils.wPawn:
+                eval += wPawnEval[posX][posY]
+
+
+
+
         for posX, posY in self.bElemList:
             numberPiece = self.m_board[posX][posY]
             eval += valuePieces[numberPiece]
-
+            if numberPiece == Utils.bKnight:
+                eval += bKnightEval[posX][posY]
+            elif numberPiece == Utils.bQueen:
+                eval += bQueenEval[posX][posY]
+            elif numberPiece == Utils.bRook:
+                eval += bRookEval[posX][posY]
+            elif numberPiece == Utils.bPawn:
+                eval += bPawnEval[posX][posY]
         return eval
 
-    def __hash__(self):
-        unique_total = 0
-        for each in self.m_board:
-            unique_total += sum(each)
-        return hash((self.m_agentPos.row, self.m_agentPos.col, self.m_agentPos, unique_total))

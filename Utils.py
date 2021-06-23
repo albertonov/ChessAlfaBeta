@@ -189,7 +189,7 @@ def piezaFactory(value):
         else:
             return None
 
-def getChessInstancePosition(p, seed, turn):
+def getChessInstancePosition(p, seed, turn, prof):
     numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]
 
     n = 8
@@ -220,11 +220,11 @@ def getChessInstancePosition(p, seed, turn):
                     piece = bQueen
                 board[pos.row][pos.col] = piece
 
-    return State(board, turn)
+    return State(board, turn, prof)
 
 
 
-def getChessInstance(p, seed, turn):
+def getChessInstance(p, seed, turn, prof):
     n = 8
     board = [[empty for i in range(n)] for j in range(n)]
 
@@ -259,7 +259,7 @@ def getChessInstance(p, seed, turn):
     board[n - 1][4] = bQueen
 
     # Creating the instance, i.e., the state
-    state = State(board, turn)
+    state = State(board, turn, prof)
     return state
 
 

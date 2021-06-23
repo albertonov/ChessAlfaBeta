@@ -24,6 +24,12 @@ def incrementGenerated(increment):
     global generated
     generated = generated + increment
 
+def setToZeroExpandedAndGeneratedInMM():
+    global generated
+    generated = 0
+    global expanded
+    expanded = 0
+
 def Sucesores(state, turn):
     incrementExpanded(1)
     newStates = []
@@ -82,7 +88,6 @@ def piezaFactory(value):
             return None
 
 def MiniMax (state, turn):
-    print(f"Dentro de MINIMAX ->{generated}, {expanded}")
     if turn:
         v, m = MinValue(state, turn, None)
         return v, m, generated, expanded
@@ -120,16 +125,3 @@ def MaxValue(state, turn,m):
     return v,m
 
 
-
-# main to test the methods
-
-if __name__ == '__main__':
-    st = Utils.getChessInstancePosition(0.2, 100, 0)
-    print(st.m_board)
-    st.reloadPositions()
-    Utils.printBoard(st)
-
-
-    v, m = (MiniMax(st, 0))
-    print(f"Evaluation value is {v}")
-    print(f"Action is ${m}")
