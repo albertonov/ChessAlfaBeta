@@ -1,35 +1,40 @@
 import copy
 import Utils
 from Position import Position
+from Statistics import Statistics
 
 MINUS_INF = -1000000
 PLUS_INF = 1000000
-expanded = 0
-generated = 0
+# expanded = 0
+# generated = 0
 
 
-def incrementExpanded(increment):
-    global expanded
-    expanded = expanded + increment
+# def incrementExpanded(increment):
+    # global expanded
+    # expanded = expanded + increment
 
 
-def incrementGenerated(increment):
-    global generated
-    generated = generated + increment
+# ef incrementGenerated(increment):
+    # global generated
+    # generated = generated + increment
+stats = Statistics()
 
 
 def successors(state, turn):
-    incrementExpanded(1)
+    #  incrementExpanded(1)
+    stats.expanded = stats.expanded + 1
     newstates = []
     if (turn):  # Whites
         for pos in state.wElemList:
             states = get_states(pos[0], pos[1], state)
-            incrementGenerated(len(states))
+            stats.generated = stats.generated + len(states)
+            #  incrementGenerated(len(states))
             newstates.extend(states)
     else:  # Blacks
         for pos in state.bElemList:
             states = get_states(pos[0], pos[1], state)
-            incrementGenerated(len(states))
+            stats.generated = stats.generated + len(states)
+            #  incrementGenerated(len(states))
             newstates.extend(states)
     return newstates
 
@@ -50,10 +55,10 @@ def get_states(x, y, state):
 def minimax(state, turn, pruning):
     if turn:
         v, m = minvalue(state, turn, None, pruning=pruning)
-        return v, m, generated, expanded
+        return v, m, stats
     else:
         v, m = maxvalue(state, turn, None, pruning=pruning)
-        return v, m, generated, expanded
+        return v, m, stats
 
 
 def minvalue(state, turn, m, alfa=MINUS_INF, beta=PLUS_INF, pruning=False):

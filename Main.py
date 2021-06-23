@@ -2,36 +2,39 @@ import Utils
 from MiniMax import minimax
 from Position import Position
 
+LINE_LENGTH = 27
+moves = 0
 
-def getStatePredefined(prob, seed, turn):
+
+def get_test_state(prob, seed, turn):
     state = Utils.get_chess_instance_position(prob, seed, turn)
     return state
 
 
-def AIvsAI(maxMoves, seed, turn, prob, initial, prune=False):
-    if (initial):
+def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3):
+    if initial:
         st = Utils.get_chess_instance(prob, seed, turn)
     else:
-        st = getStatePredefined(prob, seed, turn)
-    st.reloadPositions()
-    print(f"INITIAL")
+        st = get_test_state(prob, seed, turn)
+    st.reloadPositions(depth)
     Utils.print_board(st)
-    print("--------------------------------\n\n\n")
+    print('-' * LINE_LENGTH)
     final = False
-    while maxMoves > 0 and not final:
-        v, m, gen, exp = (minimax(st, turn, pruning=prune))
+    while max_moves > 0 and not final:
+        v, m, stats = (minimax(st, turn, pruning=prune))
         print(f"Turn is {turn}")
         print(f"Evaluation value is {v}")
         print(f"Action is ${m}")
-        if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5 or st.m_board[m.m_finalPos.row][
-            m.m_finalPos.col] == 11):
+        if st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5 or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11:
             final = True
         st = st.applyAction(m)
-        st.depth = 3
+        st.depth = depth
         Utils.print_board(st)
-        print(f"--------------{maxMoves}---------------\n\n\n")
+        global moves
+        moves = moves + 1
+        print(f"------------{moves}--------------\n\n")
         turn = (turn + 1) % 2
-        maxMoves = maxMoves - 1
+        max_moves = max_moves - 1
 
     if (v > 0):
         print("Ganan Blancas")
@@ -39,8 +42,8 @@ def AIvsAI(maxMoves, seed, turn, prob, initial, prune=False):
         print("Ganan Negras")
     else:
         print("Tablas")
-    print(f"Generados: {gen}")
-    print(f"Expandidos: {exp}")
+    print(f"Generados: {stats.generated}")
+    print(f"Expandidos: {stats.expanded}")
 
 
 def makeMovement(state, turn):
@@ -92,15 +95,15 @@ def makeMovement(state, turn):
         a = 0
 
 
-def humanvsAI(seed, turn, prob, initial, prune=False):
+def humanvsAI(seed, turn, prob, initial, prune=False, depth=3):
     if (initial):
         st = Utils.get_chess_instance(prob, seed, turn)
     else:
-        st = getStatePredefined(prob, seed, turn)
-    st.reloadPositions()
-    print(f"INITIAL")
+        st = get_test_state(prob, seed, turn)
+    st.reloadPositions(depth)
+    print('-' * LINE_LENGTH)
     Utils.print_board(st)
-    print("--------------------------------\n\n\n")
+    print('-' * LINE_LENGTH)
     final = False
     while not final:
         # turno jugador
@@ -109,20 +112,20 @@ def humanvsAI(seed, turn, prob, initial, prune=False):
             print("Humano gana")
             break
         # turno agente
-        v, m, gen, exp = (minimax(st, turn, pruning=prune))
+        v, m, stats = (minimax(st, turn, pruning=prune))
         print(f"Evaluation value is {v}")
         print(f"Action is ${m}")
         if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5 or st.m_board[m.m_finalPos.row][
             m.m_finalPos.col] == 11):
             final = True
         st = st.applyAction(m)
-        st.depth = 3
+        st.depth = depth
         Utils.print_board(st)
-        print(f"-----------------------------\n\n\n")
-    print(f"Generados: {gen}")
-    print(f"Expandidos: {exp}")
+        print('-' * LINE_LENGTH)
+    print(f"Generados: {stats.expanded}")
+    print(f"Expandidos: {stats.generated}")
 
 
 if __name__ == '__main__':
     # humanvsAI(927, 0, 0.1, False)
-    AIvsAI(100, 123, 0, 0.2, False, True)
+    ai_vs_ai(100, 123, 0, 0.2, False, False)

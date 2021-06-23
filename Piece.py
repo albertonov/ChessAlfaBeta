@@ -76,7 +76,7 @@ class Piece:
     def get_vertical_down_moves(self, state):
         l = []
         agent_color = self.m_color
-        row0, col0 = state.m_agentPos.row, state.m_agentPos.col;
+        row0, col0 = state.m_agentPos.row, state.m_agentPos.col
 
         busy_cell = False
         for r in range(row0 + 1, state.m_boardSize):

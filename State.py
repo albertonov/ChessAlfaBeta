@@ -100,9 +100,10 @@ class State:
 
         return newState
 
-    def reloadPositions(self):
+    def reloadPositions(self, depth):
         self.wElemList.clear()
         self.bElemList.clear()
+        self.depth = depth
         for eachX in range(len(self.m_board)):
             for eachY in range(len(self.m_board)):
                 if self.m_board[eachX][eachY] in range(0,6):#Blancas
