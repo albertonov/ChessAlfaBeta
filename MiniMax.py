@@ -23,20 +23,20 @@ stats = Statistics()
 def successors(state, turn):
     #  incrementExpanded(1)
     stats.expanded = stats.expanded + 1
-    newstates = []
-    if (turn):  # Whites
+    new_states = []
+    if turn:  # Whites
         for pos in state.wElemList:
             states = get_states(pos[0], pos[1], state)
             stats.generated = stats.generated + len(states)
             #  incrementGenerated(len(states))
-            newstates.extend(states)
+            new_states.extend(states)
     else:  # Blacks
         for pos in state.bElemList:
             states = get_states(pos[0], pos[1], state)
             stats.generated = stats.generated + len(states)
             #  incrementGenerated(len(states))
-            newstates.extend(states)
-    return newstates
+            new_states.extend(states)
+    return new_states
 
 
 def get_states(x, y, state):

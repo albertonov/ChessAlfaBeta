@@ -30,73 +30,72 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3):
         st = st.applyAction(m)
         st.depth = depth
         Utils.print_board(st)
-        global moves
-        moves = moves + 1
-        print(f"------------{moves}--------------\n\n")
+        stats.total_moves = stats.total_moves + 1
+        print(f"------------{stats.total_moves}--------------\n\n")
         turn = (turn + 1) % 2
         max_moves = max_moves - 1
 
-    if (v > 0):
-        print("Ganan Blancas")
-    elif (v < 0):
-        print("Ganan Negras")
+    if v > 0:
+        print("WHITES WIN!")
+    elif v < 0:
+        print("BLACKS WIN!")
     else:
-        print("Tablas")
-    print(f"Generados: {stats.generated}")
-    print(f"Expandidos: {stats.expanded}")
+        print("DRAW!")
+    stats.finalize()
+    print(f"States generated: {stats.generated}")
+    print(f"States expanded: {stats.expanded}")
+    print(f"Time required: {stats.total_time:.2f}(s)")
+    print(f"Per movement statistics:")
+    print(f"\tTime per movement->{stats.time_per_movement:.2f}(s)")
+    print(f"\tGenerated states per movement->{stats.generated_per_move}")
+    print(f"\tExpanded states per movement->{stats.expanded_per_move}")
 
-
-def makeMovement(state, turn):
+def manual_move(state, turn, depth):
     if turn:
         i = 1
         for pos in state.wElemList:
-            valuePiece = state.m_board[pos[0]][pos[1]]
-            print(str(i) + ": Mover " + str(Utils.valueNames[valuePiece]) + " en [" + str(pos[0]) + "," + str(
-                pos[1]) + "]")
+            value_piece = state.m_board[pos[0]][pos[1]]
+            print(str(i) + f"{i}: Move {Utils.valueNames[value_piece]} to [{pos[0]},{pos[0]}]")
             i = i + 1
-
-        opt = int(input("Selecciona una pieza: "))
-        posPiezaElegida = state.wElemList[opt - 1]
-        state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
-        pieza = Utils.piece_factory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
-        print(pieza.get_possible_actions(state))
-        posibleActions = (pieza.get_possible_actions(state))
+        opt = int(input("Select a piece to move: "))
+        pos_selected = state.wElemList[opt - 1]
+        state.m_agentPos = Position(pos_selected[0], pos_selected[1])
+        piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
+        print(piece.get_possible_actions(state))
+        possible_actions = (piece.get_possible_actions(state))
         i = 1
-        for action in posibleActions:
-            print(str(i) + ": Mover a " + str(action.m_finalPos))
+        for action in possible_actions:
+            print(f"{i}: Move to position {action.m_finalPos}")
             i = i + 1
-        act = int(input("Selecciona una accion: "))
-        state = state.applyAction(posibleActions[act - 1])
-        state.depth = 3
+        act = int(input("Which action?"))
+        state = state.applyAction(possible_actions[act - 1])
+        state.depth = depth
         Utils.print_board(state)
         return state
-
     else:
         i = 1
         for pos in state.bElemList:
-            valuePiece = state.m_board[pos[0]][pos[1]]
-            print(str(i) + ": Mover " + str(Utils.valueNames[valuePiece]) + " en [" + str(pos[0]) + "," + str(
-                pos[1]) + "]")
+            value_piece = state.m_board[pos[0]][pos[1]]
+            print(str(i) + f"{i}: Move {Utils.valueNames[value_piece]} to [{pos[0]},{pos[0]}]")
             i = i + 1
-        opt = int(input("Selecciona una pieza: "))
-        posPiezaElegida = state.bElemList[opt - 1]
-        state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
-        pieza = Utils.piece_factory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
-        posibleActions = (pieza.get_possible_actions(state))
+        opt = int(input("Select a piece to move: "))
+        pos_selected = state.bElemList[opt - 1]
+        state.m_agentPos = Position(pos_selected[0], pos_selected[1])
+        piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
+        possible_actions = (piece.get_possible_actions(state))
         i = 1
-        for action in posibleActions:
-            print(str(i) + ": Mover a " + str(action.m_finalPos))
+        for action in possible_actions:
+            print(f"{i}: Move to position {action.m_finalPos}")
             i = i + 1
-        act = int(input("Selecciona una accion: "))
-        state = state.applyAction(posibleActions[act - 1])
-        state.depth = 3
+        act = int(input("Which action?"))
+        state = state.applyAction(possible_actions[act - 1])
+        state.depth = depth
         Utils.print_board(state)
         return state
-        a = 0
 
 
-def humanvsAI(seed, turn, prob, initial, prune=False, depth=3):
-    if (initial):
+def human_vs_ai(seed, turn, prob, initial, prune=False, depth=3):
+    if initial:
         st = Utils.get_chess_instance(prob, seed, turn)
     else:
         st = get_test_state(prob, seed, turn)
@@ -106,12 +105,12 @@ def humanvsAI(seed, turn, prob, initial, prune=False, depth=3):
     print('-' * LINE_LENGTH)
     final = False
     while not final:
-        # turno jugador
-        st = makeMovement(st, turn)
-        if (st.isFinal):
-            print("Humano gana")
+        # manual move for human player
+        st = manual_move(st, turn, depth)
+        if st.isFinal:
+            print("Human player wins!")
             break
-        # turno agente
+        # AI turn
         v, m, stats = (minimax(st, turn, pruning=prune))
         print(f"Evaluation value is {v}")
         print(f"Action is ${m}")
@@ -122,10 +121,11 @@ def humanvsAI(seed, turn, prob, initial, prune=False, depth=3):
         st.depth = depth
         Utils.print_board(st)
         print('-' * LINE_LENGTH)
-    print(f"Generados: {stats.expanded}")
-    print(f"Expandidos: {stats.generated}")
+    print(f"States generated: {stats.generated}")
+    print(f"States expanded: {stats.expanded}")
+    print(f"Time required: {stats.total_time:.2f}(s)")
 
 
 if __name__ == '__main__':
-    # humanvsAI(927, 0, 0.1, False)
-    ai_vs_ai(100, 123, 0, 0.2, False, False)
+    # human_vs_ai(927, 0, 0.1, False)
+    ai_vs_ai(100, 123, 0, 0.2, False, True)
