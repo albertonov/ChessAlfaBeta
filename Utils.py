@@ -141,24 +141,6 @@ def printBoard(state):
 
 
 
-def getHeuristic(state):
-    size = state.m_boardSize
-    heuristic = [[size - j -1 for i in range(size)] for j in range(size)]
-
-    return heuristic
-
-
-def getStates(x,y,state):
-    stateList = []
-    value = state.m_board[x][y]
-    pieza = piezaFactory(value)
-    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
-    modState.m_agentPos = Position(x, y)
-    actions = pieza.getPossibleActions(modState)
-    for each in actions:
-        stateList.append(modState.applyAction(each))
-    return stateList
-
 
 
 def piezaFactory(value):
@@ -188,6 +170,20 @@ def piezaFactory(value):
             return Knight(1)
         else:
             return None
+
+
+def getStates(x,y,state):
+    stateList = []
+    value = state.m_board[x][y]
+    pieza = piezaFactory(value)
+    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
+    modState.m_agentPos = Position(x, y)
+    actions = pieza.getPossibleActions(modState)
+    for each in actions:
+        stateList.append(modState.applyAction(each))
+    return stateList
+
+
 
 def getChessInstancePosition(p, seed, turn, prof):
     numPieces = [8, 2, 2, 2, 1, 1, 8, 2, 2, 2, 1, 1]

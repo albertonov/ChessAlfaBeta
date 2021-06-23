@@ -1,109 +1,58 @@
-import copy
-import sys
 import Utils
-from State import State
-import Piece
-import math as m
-from Piece import Piece
-from Rook import Rook
-from Knight import Knight
-from Pawn import Pawn
-from King import King
-from Bishop import Bishop
-from Queen import Queen
-from Position import Position
 
-expanded = 0
-generated = 0
 
-def incrementExpanded(increment):
-    global expanded
-    expanded = expanded + increment
+nodosExpandidosAB = 0
+nodosGeneradosAB = 0
 
-def incrementGenerated(increment):
-    global generated
-    generated = generated + increment
 
 def setToZeroExpandedAndGeneratedInAB():
-    global generated
-    generated = 0
-    global expanded
-    expanded = 0
+    #pone a 0 expandidos y generados, usado en las pruebas
+    global nodosGeneradosAB
+    nodosGeneradosAB = 0
+    global nodosExpandidosAB
+    nodosExpandidosAB = 0
 
-def Sucesores(state, turn):
-    incrementExpanded(1)
-    newStates = []
-    if(turn):                       #juegan blancas
-        for pos in state.wElemList:
-            states = getStates(pos[0],pos[1],state)
-            incrementGenerated(len(states))
-            newStates.extend(states)
+def Sucesores(state, jueganBlancas):
+    global nodosGeneradosAB
+    global nodosExpandidosAB
+    nodosExpandidosAB = nodosExpandidosAB + 1
+
+    estadosSucesores = []
+    if(jueganBlancas):                       #juegan blancas
+        for pos in state.listaBlancas:
+            states = Utils.getStates(pos[0],pos[1],state)
+            estadosSucesores.extend(states)
+            nodosGeneradosAB = nodosGeneradosAB + (len(states))
+
     else:                           #juegan negras
-        for pos in state.bElemList:
-            states = getStates(pos[0], pos[1], state)
-            incrementGenerated(len(states))
-            newStates.extend(states)
-    return newStates
+        for pos in state.listaNegras:
+            states = Utils.getStates(pos[0], pos[1], state)
+            estadosSucesores.extend(states)
+            nodosGeneradosAB = nodosGeneradosAB + (len(states))
 
-
-def getStates(x,y,state):
-    stateList = []
-    value = state.m_board[x][y]
-    pieza = piezaFactory(value)
-    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
-    modState.m_agentPos = Position(x, y)
-    actions = pieza.getPossibleActions(modState)
-    for each in actions:
-        stateList.append(modState.applyAction(each))
-    return stateList
+    return estadosSucesores
 
 
 
-def piezaFactory(value):
-        if value == Utils.wPawn:
-            return Pawn(0)
-        elif value == Utils.bPawn:
-            return Pawn(1)
-        elif value == Utils.wRook:
-            return Rook(0)
-        elif value == Utils.bRook:
-            return Rook(1)
-        elif value == Utils.wKing:
-            return King(0)
-        elif value == Utils.bKing:
-            return King(1)
-        elif value == Utils.wQueen:
-            return Queen(0)
-        elif value == Utils.bQueen:
-            return Queen(1)
-        elif value == Utils.wBishop:
-            return  Bishop(0)
-        elif value == Utils.bBishop:
-            return Bishop(1)
-        elif value == Utils.wKnight:
-            return Knight(0)
-        elif value == Utils.bKnight:
-            return Knight(1)
-        else:
-            return None
+
 
 def AlfaBeta (state, turn):
     alfa = -1000000
     beta = 1000000
     if turn:
         v, m = MinValue(state, turn, None, alfa, beta)
-        return v, m, generated, expanded
+        return v, m, nodosGeneradosAB, nodosExpandidosAB
     else:
         v, m = MaxValue(state, turn, None, alfa, beta)
-        return v, m, generated, expanded
+        return v, m, nodosGeneradosAB, nodosExpandidosAB
 
 
 
 def MinValue(state, turn,m, alfa, beta):
     turn = (turn+1)%2
-    if state.isFinal or state.depth == 0:
+    if state.isFinal or state.profundidad == 0:
         m = state.move
-        return state.getEval(), m
+        return state.Utilidad(), m
     v = 1000000
     for st in Sucesores(state,turn):
         act_v = MaxValue(st, turn,m, alfa, beta)[0]
@@ -118,9 +67,9 @@ def MinValue(state, turn,m, alfa, beta):
 
 def MaxValue(state, turn,m, alfa, beta):
     turn = (turn+1)%2
-    if state.isFinal or state.depth == 0:
+    if state.isFinal or state.profundidad == 0:
         m = state.move
-        return state.getEval(), m
+        return state.Utilidad(), m
     v = -10000000
     for st in Sucesores(state, turn):
         act_v = MinValue(st, turn,m, alfa, beta)[0]

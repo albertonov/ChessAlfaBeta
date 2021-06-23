@@ -21,10 +21,3 @@ class Action:
         return "[ (" + str(self.m_initPos.row) + "," + str(self.m_initPos.col) + ") -> (" + str(
             self.m_finalPos.row) + "," + str(self.m_finalPos.col) + ") ]";
 
-
-if __name__ == '__main__':
-    p1 = Position(0, 1)
-    p2 = Position(8, 3)
-    a1 = Action(p1, p2)
-    print(a1.getCost())
-    print(a1)

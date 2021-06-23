@@ -5,26 +5,21 @@ import sys
 import copy
 import Utils
 from Action import Action
-import collections as q
-
 from Position import Position
 
 
 class State:
-    id = 0
     m_board = None
     m_boardSize = -1
     isFinal = False
-    depth = 3
-    wElemList = []
-    bElemList =  []
+    profundidad = 3 #3 por defecto
+    listaBlancas = []
+    listaNegras =  []
     m_agentPos = -1
     turn = -1
     move = None
-    valorFinal = 0
-    father = None
 
-    # constructor
+
     def __init__(self, board, turn, prof):
         self.m_board = board
         self.turn = turn
@@ -35,25 +30,23 @@ class State:
             if (self.m_agentPos > 5):
                 self.m_color = 1  # black
         self.m_boardSize = len(board[0])
-        self.wElemList = []
-        self.bElemList = []
-        self.depth = prof
-        #self.crearListas() # carga posiciones iniciales
+        self.listaBlancas = []
+        self.listaNegras = []
+        self.profundidad = prof
 
 
 
-    # hard copy of an State
     def copy(self, memodict={}):
         newState = State(self.m_board, self.turn)
         newState.__dict__.update(self.__dict__)
         newState.m_boardSize = copy.deepcopy(self.m_boardSize, memodict)
-        newState.wElemList = copy.deepcopy(self.wElemList, memodict)
+        newState.listaBlancas = copy.deepcopy(self.listaBlancas, memodict)
         newState.m_board = copy.deepcopy(self.m_board, memodict)
         newState.m_agentPos = copy.deepcopy(self.m_agentPos, memodict)
-        newState.bElemList = copy.deepcopy(self.bElemList, memodict)
+        newState.listaNegras = copy.deepcopy(self.listaNegras, memodict)
         newState.turn = copy.deepcopy(self.turn, memodict)
         newState.move = copy.deepcopy(self.move, memodict)
-        newState.depth = copy.deepcopy(self.depth, memodict)
+        newState.profundidad = copy.deepcopy(self.profundidad, memodict)
         newState.isFinal = copy.deepcopy(self.isFinal, memodict)
         return newState
 
@@ -63,7 +56,7 @@ class State:
         turn = -1
         captura = False
         newState = copy.deepcopy(self)
-        newState.id = self.id + 1
+        newState.profundidad = newState.profundidad - 1
         piezaCapturada = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
         pieza = self.m_board[action.m_initPos.row][action.m_initPos.col]
         if (piezaCapturada == Utils.wKing) or (piezaCapturada == Utils.bKing) :
@@ -73,30 +66,35 @@ class State:
 
 
         if pieza <= 5 and pieza >= 0:
-            newState.wElemList.remove((action.m_initPos.row, action.m_initPos.col))
-            newState.wElemList.append((action.m_finalPos.row, action.m_finalPos.col))
+            newState.listaBlancas.remove((action.m_initPos.row, action.m_initPos.col))
+            newState.listaBlancas.append((action.m_finalPos.row, action.m_finalPos.col))
             if captura:
-                newState.bElemList.remove((action.m_finalPos.row, action.m_finalPos.col))
+                newState.listaNegras.remove((action.m_finalPos.row, action.m_finalPos.col))
 
         else:
-            newState.bElemList.remove((action.m_initPos.row, action.m_initPos.col))
-            newState.bElemList.append((action.m_finalPos.row, action.m_finalPos.col))
+            newState.listaNegras.remove((action.m_initPos.row, action.m_initPos.col))
+            newState.listaNegras.append((action.m_finalPos.row, action.m_finalPos.col))
             if captura:
-                newState.wElemList.remove((action.m_finalPos.row, action.m_finalPos.col))
+                newState.listaBlancas.remove((action.m_finalPos.row, action.m_finalPos.col))
     
 
 
-        newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
+
+        #Realizamos el movimiento
 
         if (pieza == Utils.wPawn and action.m_finalPos.row == 7):
+            # Coronacion de peon blanco
             newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.wQueen
         elif (pieza == Utils.bPawn and action.m_finalPos.row == 0):
+            # Coronacion de peon negro
             newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = Utils.bQueen
         else:
+            #anadimos la pieza a la posicion final
             newState.m_board[action.m_finalPos.row][action.m_finalPos.col] = pieza
 
+        #eliminamos la pieza de la posicion original
+        newState.m_board[action.m_initPos.row][action.m_initPos.col] = Utils.empty
 
-        newState.depth = newState.depth - 1
         newInitPos = Position(action.m_initPos.row, action.m_initPos.col)
         newFinalPos = Position(action.m_finalPos.row, action.m_finalPos.col)
         newState.move = Action(newInitPos,newFinalPos)
@@ -104,17 +102,17 @@ class State:
         return newState
 
     def crearListas(self):
-        self.wElemList.clear()
-        self.bElemList.clear()
-        for eachX in range(len(self.m_board)):
-            for eachY in range(len(self.m_board)):
-                if self.m_board[eachX][eachY] in range(0,6):#Blancas
-                    self.wElemList.append((eachX,eachY))#por la derecha, tupla
-                elif self.m_board[eachX][eachY] in range(6,12):#Negras
-                    self.bElemList.append((eachX, eachY))#por la izqda, tupla
+        tam = len(self.m_board)
+        for col in range(tam):
+            for row in range(tam):
+                if self.m_board[col][row] <= 5:
+                    self.listaBlancas.append((col, row))
+
+                elif self.m_board[col][row] >= 6 and self.m_board[col][row] <=11 :
+                    self.listaNegras.append((col, row))
 
 
-    def getEval(self):
+    def Utilidad(self):
 
         bKnightEval =[  [50, 40, 30, 30, 30, 30, 40, 50],
                         [40, 20,  0,  0,  0,  0, 20, 40],
@@ -203,7 +201,7 @@ class State:
 
 
 
-        eval = 0
+        utilidad = 0
         valuePieces = {
             0: +100,
             1: +500,
@@ -218,31 +216,34 @@ class State:
             10: -900,
             11: -20000
         }
-        for posX, posY in self.wElemList:
+        for posX, posY in self.listaBlancas:
             numberPiece = self.m_board[posX][posY]
-            eval += valuePieces[numberPiece]
+            utilidad += valuePieces[numberPiece]
             if numberPiece == Utils.wKnight:
-                eval += wKnightEval[posX][posY]
+                utilidad += wKnightEval[posX][posY]
             elif numberPiece == Utils.wQueen:
-                eval += wQueenEval[posX][posY]
+                utilidad += wQueenEval[posX][posY]
             elif numberPiece == Utils.wRook:
-                eval += wRookEval[posX][posY]
+                utilidad += wRookEval[posX][posY]
             elif numberPiece == Utils.wPawn:
-                eval += wPawnEval[posX][posY]
+                utilidad += wPawnEval[posX][posY]
 
 
 
 
-        for posX, posY in self.bElemList:
+        for posX, posY in self.listaNegras:
             numberPiece = self.m_board[posX][posY]
-            eval += valuePieces[numberPiece]
+            utilidad += valuePieces[numberPiece]
             if numberPiece == Utils.bKnight:
-                eval += bKnightEval[posX][posY]
+                utilidad += bKnightEval[posX][posY]
             elif numberPiece == Utils.bQueen:
-                eval += bQueenEval[posX][posY]
+                utilidad += bQueenEval[posX][posY]
             elif numberPiece == Utils.bRook:
-                eval += bRookEval[posX][posY]
+                utilidad += bRookEval[posX][posY]
             elif numberPiece == Utils.bPawn:
-                eval += bPawnEval[posX][posY]
-        return eval
+                utilidad += bPawnEval[posX][posY]
+
+
+
+        return utilidad
 

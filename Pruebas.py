@@ -122,7 +122,7 @@ else:
                 endPrueba = time.time()
                 nodosAlphaBeta.append((gen, exp))
                 setToZeroExpandedAndGeneratedInAB()
-                nPiezas.append(len(st.bElemList) + len(st.wElemList))
+                nPiezas.append(len(st.listaNegras) + len(st.listaBlancas))
                 movementsAlphaBeta.append(m)
                 timeAlphabeta.append({round(endPrueba - startPrueba, 4)})
 

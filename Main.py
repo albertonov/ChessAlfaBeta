@@ -9,19 +9,21 @@ from Position import Position
 
 if __name__ == '__main__':
 
-    def makeMovement(state, turn):
+    def makeMovement(state, turn, prof):
         if turn:
             i = 1
-            for pos in state.wElemList:
+            for pos in state.listaBlancas:
                 valuePiece = state.m_board[pos[0]][pos[1]]
-                print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
-                i = i+1
+                pieza = Utils.piezaFactory(state.m_board[pos[0]][pos[1]])
+                state.m_agentPos = Position(pos[0], pos[1])
+                if(len(pieza.getPossibleActions(state)) > 0):
+                    print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
+                    i = i+1
 
             opt = int(input("Selecciona una pieza: "))
-            posPiezaElegida = state.wElemList[opt - 1]
+            posPiezaElegida = state.listaBlancas[opt - 1]
             state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
             pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
-            print(pieza.getPossibleActions(state))
             posibleActions = (pieza.getPossibleActions(state))
             i = 1
             for action in posibleActions:
@@ -29,18 +31,21 @@ if __name__ == '__main__':
                 i = i + 1
             act = int(input("Selecciona una accion: "))
             state = state.applyAction(posibleActions[act-1])
-            state.depth = 3
+            state.profundidad = prof
             Utils.printBoard(state)
             return state
 
         else:
             i = 1
-            for pos in state.bElemList:
+            for pos in state.listaNegras:
                 valuePiece = state.m_board[pos[0]][pos[1]]
-                print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
-                i = i+1
+                pieza = Utils.piezaFactory(state.m_board[pos[0]][pos[1]])
+                state.m_agentPos = Position(pos[0], pos[1])
+                if(len(pieza.getPossibleActions(state)) > 0):
+                    print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
+                    i = i+1
             opt = int(input("Selecciona una pieza: "))
-            posPiezaElegida = state.bElemList[opt - 1]
+            posPiezaElegida = state.listaNegras[opt - 1]
             state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
             pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
             posibleActions = (pieza.getPossibleActions(state))
@@ -50,14 +55,12 @@ if __name__ == '__main__':
                 i = i + 1
             act = int(input("Selecciona una accion: "))
             state = state.applyAction(posibleActions[act-1])
-            state.depth = 3
+            state.profundidad = prof
             Utils.printBoard(state)
             return state
-            a = 0
 
 
     def AIvsAI(maxMoves, seed, turn, prob, initial, prof, method):
-        print("AIVSAI" + str(initial))
         if (initial):
             st = Utils.getChessInstance(prob, seed, turn, prof)
         else:
@@ -76,7 +79,7 @@ if __name__ == '__main__':
             print(f"Action is ${m} " + str(st.isFinal))
 
             st = st.applyAction(m)
-            st.depth = prof
+            st.profundidad = prof
             if (st.isFinal):
                 final = True
             Utils.printBoard(st)
@@ -96,7 +99,7 @@ if __name__ == '__main__':
 
 
     def humanvsAI(seed, turn, prob, initial, prof, method):
-        print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+
         if (initial):
             st = Utils.getChessInstance(prob, seed, turn, prof)
         else:
@@ -108,11 +111,11 @@ if __name__ == '__main__':
         final = False
         while not final:
             #turno jugador
-            st = makeMovement(st, turn)
+            st = makeMovement(st, turn, prof)
             if (st.isFinal):
                 print("Humano gana")
                 break
-            #turno agente
+            #turno maquina
             if (method == "alphabeta"):
                 v, m, gen, exp = (AlfaBeta(st, turn))
             else:
@@ -122,11 +125,9 @@ if __name__ == '__main__':
             st = st.applyAction(m)
             if (st.isFinal):
                 final = True
-            st.depth = prof
+            st.profundidad = prof
             Utils.printBoard(st)
             print(f"-----------------------------\n\n\n")
-        print(f"Generados: {gen}")
-        print(f"Expandidos: {exp}")
 
 
 
