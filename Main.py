@@ -44,6 +44,7 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3):
     stats.finalize()
     stats.show_me()
 
+
 def manual_move(state, turn, depth):
     if turn:
         i = 1

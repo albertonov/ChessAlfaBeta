@@ -5,36 +5,22 @@ from Statistics import Statistics
 
 MINUS_INF = -1000000
 PLUS_INF = 1000000
-# expanded = 0
-# generated = 0
 
-
-# def incrementExpanded(increment):
-    # global expanded
-    # expanded = expanded + increment
-
-
-# ef incrementGenerated(increment):
-    # global generated
-    # generated = generated + increment
 stats = Statistics()
 
 
 def successors(state, turn):
-    #  incrementExpanded(1)
     stats.expanded = stats.expanded + 1
     new_states = []
     if turn:  # Whites
         for pos in state.wElemList:
             states = get_states(pos[0], pos[1], state)
             stats.generated = stats.generated + len(states)
-            #  incrementGenerated(len(states))
             new_states.extend(states)
     else:  # Blacks
         for pos in state.bElemList:
             states = get_states(pos[0], pos[1], state)
             stats.generated = stats.generated + len(states)
-            #  incrementGenerated(len(states))
             new_states.extend(states)
     return new_states
 
@@ -53,11 +39,14 @@ def get_states(x, y, state):
 
 
 def minimax(state, turn, pruning):
+    stats.init_eval = state.getEval()
     if turn:
         v, m = minvalue(state, turn, None, pruning=pruning)
+        stats.final_eval = v
         return v, m, stats
     else:
         v, m = maxvalue(state, turn, None, pruning=pruning)
+        stats.final_eval = v
         return v, m, stats
 
 

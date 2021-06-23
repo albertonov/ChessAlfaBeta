@@ -15,6 +15,7 @@ class Statistics(object):
         self.total_moves = 0
         self.init_eval = 0
         self.final_eval = 0
+        self.delta = self.final_eval -self.init_eval
 
     def finalize(self):
         self.final = time.time()
@@ -27,7 +28,9 @@ class Statistics(object):
         print(f"States generated: {self.generated}")
         print(f"States expanded: {self.expanded}")
         print(f"Time required: {self.total_time:.2f}(s)")
+        print(f"From initial eval[{self.init_eval}] to a final eval[{self.final_eval}] ")
         print(f"Per movement statistics:")
         print(f"\tTime per movement->{self.time_per_movement:.2f}(s)")
         print(f"\tGenerated states per movement->{self.generated_per_move}")
         print(f"\tExpanded states per movement->{self.expanded_per_move}")
+
