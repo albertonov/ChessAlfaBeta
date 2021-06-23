@@ -42,13 +42,7 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3):
     else:
         print("DRAW!")
     stats.finalize()
-    print(f"States generated: {stats.generated}")
-    print(f"States expanded: {stats.expanded}")
-    print(f"Time required: {stats.total_time:.2f}(s)")
-    print(f"Per movement statistics:")
-    print(f"\tTime per movement->{stats.time_per_movement:.2f}(s)")
-    print(f"\tGenerated states per movement->{stats.generated_per_move}")
-    print(f"\tExpanded states per movement->{stats.expanded_per_move}")
+    stats.show_me()
 
 def manual_move(state, turn, depth):
     if turn:
@@ -121,9 +115,8 @@ def human_vs_ai(seed, turn, prob, initial, prune=False, depth=3):
         st.depth = depth
         Utils.print_board(st)
         print('-' * LINE_LENGTH)
-    print(f"States generated: {stats.generated}")
-    print(f"States expanded: {stats.expanded}")
-    print(f"Time required: {stats.total_time:.2f}(s)")
+    stats.finalize()
+    stats.show_me()
 
 
 if __name__ == '__main__':
