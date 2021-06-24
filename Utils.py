@@ -143,44 +143,44 @@ def printBoard(state):
 
 
 
-def piezaFactory(value):
-        if value == wPawn:
+def obtenerPieza(valorPieza):
+        if valorPieza == wPawn:
             return Pawn(0)
-        elif value == bPawn:
+        elif valorPieza == bPawn:
             return Pawn(1)
-        elif value == wRook:
+        elif valorPieza == wRook:
             return Rook(0)
-        elif value == bRook:
+        elif valorPieza == bRook:
             return Rook(1)
-        elif value == wKing:
+        elif valorPieza == wKing:
             return King(0)
-        elif value == bKing:
+        elif valorPieza == bKing:
             return King(1)
-        elif value == wQueen:
+        elif valorPieza == wQueen:
             return Queen(0)
-        elif value == bQueen:
+        elif valorPieza == bQueen:
             return Queen(1)
-        elif value == wBishop:
+        elif valorPieza == wBishop:
             return  Bishop(0)
-        elif value == bBishop:
+        elif valorPieza == bBishop:
             return Bishop(1)
-        elif value == wKnight:
+        elif valorPieza == wKnight:
             return Knight(0)
-        elif value == bKnight:
+        elif valorPieza == bKnight:
             return Knight(1)
         else:
             return None
 
 
-def getStates(x,y,state):
+def getStates(row,col,state):
     listaEstados = []
-    value = state.m_board[x][y]
-    pieza = piezaFactory(value)
-    modState = copy.deepcopy(state)
-    modState.m_agentPos = Position(x, y)
-    actions = pieza.getPossibleActions(modState)
-    for action in actions:
-        listaEstados.append(modState.applyAction(action))
+    copiaEstado = copy.deepcopy(state)
+    numPieza = state.m_board[row][col]
+    pieza = obtenerPieza(numPieza)
+    copiaEstado.m_agentPos = Position(row, col)
+    posiblesAcciones = pieza.getPossibleActions(copiaEstado)
+    for action in posiblesAcciones:
+        listaEstados.append(copiaEstado.applyAction(action))
     return listaEstados
 
 
