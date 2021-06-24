@@ -11,49 +11,62 @@ if __name__ == '__main__':
 
     def makeMovement(state, turn, prof):
         if turn:
-            i = 1
-            for pos in state.listaBlancas:
-                valuePiece = state.m_board[pos[0]][pos[1]]
-                pieza = Utils.piezaFactory(state.m_board[pos[0]][pos[1]])
-                state.m_agentPos = Position(pos[0], pos[1])
-                if(len(pieza.getPossibleActions(state)) > 0):
+            accionSeleccionada = False
+            while not accionSeleccionada:
+
+                print("Piezas disponibles")
+                i = 1
+                for pos in state.listaBlancas:
+                    valuePiece = state.m_board[pos[0]][pos[1]]
                     print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
                     i = i+1
 
-            opt = int(input("Selecciona una pieza: "))
-            posPiezaElegida = state.listaBlancas[opt - 1]
-            state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
-            pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
-            posibleActions = (pieza.getPossibleActions(state))
-            i = 1
-            for action in posibleActions:
-                print(str(i) + ": Mover a " +str(action.m_finalPos) )
-                i = i + 1
-            act = int(input("Selecciona una accion: "))
+                opt = int(input("Selecciona una pieza: "))
+                posPiezaElegida = state.listaBlancas[opt - 1]
+                state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
+                pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
+                posibleActions = (pieza.getPossibleActions(state))
+                if len(posibleActions) == 0:
+                    print("Esta pieza no tiene movimientos disponibles")
+                else:
+                    i = 1
+                    for action in posibleActions:
+                        print(str(i) + ": Mover a " +str(action.m_finalPos) )
+                        i = i + 1
+                    act = int(input("Selecciona una accion: "))
+                    if act >0 and act <= len(posibleActions):
+                        accionSeleccionada = True
+
             state = state.applyAction(posibleActions[act-1])
             state.profundidad = prof
             Utils.printBoard(state)
             return state
 
         else:
-            i = 1
-            for pos in state.listaNegras:
-                valuePiece = state.m_board[pos[0]][pos[1]]
-                pieza = Utils.piezaFactory(state.m_board[pos[0]][pos[1]])
-                state.m_agentPos = Position(pos[0], pos[1])
-                if(len(pieza.getPossibleActions(state)) > 0):
+            accionSeleccionada = False
+            while not accionSeleccionada:
+                print("Piezas disponibles")
+                i = 1
+                for pos in state.listaNegras:
+                    valuePiece = state.m_board[pos[0]][pos[1]]
                     print(str(i)+ ": Mover "+str(Utils.valueNames[valuePiece])+" en ["+str(pos[0]) + "," + str(pos[1])+"]"  )
                     i = i+1
-            opt = int(input("Selecciona una pieza: "))
-            posPiezaElegida = state.listaNegras[opt - 1]
-            state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
-            pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
-            posibleActions = (pieza.getPossibleActions(state))
-            i = 1
-            for action in posibleActions:
-                print(str(i) + ": Mover a " +str(action.m_finalPos) )
-                i = i + 1
-            act = int(input("Selecciona una accion: "))
+                opt = int(input("Selecciona una pieza: "))
+                posPiezaElegida = state.listaNegras[opt - 1]
+                state.m_agentPos = Position(posPiezaElegida[0], posPiezaElegida[1])
+                pieza = Utils.piezaFactory(state.m_board[posPiezaElegida[0]][posPiezaElegida[1]])
+                posibleActions = (pieza.getPossibleActions(state))
+                if len(posibleActions) == 0:
+                    print("Esta pieza no tiene movimientos disponibles")
+                else:
+                    i = 1
+                    for action in posibleActions:
+                        print(str(i) + ": Mover a " +str(action.m_finalPos) )
+                        i = i + 1
+                    act = int(input("Selecciona una accion: "))
+                    if act > 0 and act <= len(posibleActions):
+                        accionSeleccionada = True
+
             state = state.applyAction(posibleActions[act-1])
             state.profundidad = prof
             Utils.printBoard(state)
@@ -98,41 +111,51 @@ if __name__ == '__main__':
 
 
 
-    def humanvsAI(seed, turn, prob, initial, prof, method):
+    def humanvsAI(seed, jueganBlancas, prob, initial, prof, method, dummy):
 
         if (initial):
-            st = Utils.getChessInstance(prob, seed, turn, prof)
+            st = Utils.getChessInstance(prob, seed, jueganBlancas, prof)
         else:
-            st = Utils.getChessInstancePosition(prob, seed, turn, prof)
+            st = Utils.getChessInstancePosition(prob, seed, jueganBlancas, prof)
         st.crearListas()
-        print(f"INITIAL")
         Utils.printBoard(st)
         print("--------------------------------\n\n\n")
         final = False
         while not final:
             #turno jugador
-            st = makeMovement(st, turn, prof)
-            if (st.isFinal):
-                print("Humano gana")
-                break
-            #turno maquina
-            if (method == "alphabeta"):
-                v, m, gen, exp = (AlfaBeta(st, turn))
+            if dummy:
+                print("Humano es Dummy y no juega")
             else:
-                v, m, gen, exp = (MiniMax(st, turn))
-            print(f"Evaluation value is {v}")
-            print(f"Action is ${m}")
+                if not jueganBlancas:
+                    print("Juegan negras (Humano)" + str(jueganBlancas))
+                else:
+                    print("Juegan blancas (Humano)" + str(jueganBlancas))
+                st = makeMovement(st, jueganBlancas, prof)
+                if (st.isFinal):
+                    print("Humano gana")
+                    break
+            #turno maquina
+            print("\n\n\n\n\n\n")
+            if jueganBlancas:
+                print("Juegan negras (Maquina)" + str(jueganBlancas))
+            else:
+                print("Juegan blancas (Maquina)" + str(jueganBlancas))
+
+            if (method == "alphabeta"):
+                v, m, gen, exp = (AlfaBeta(st, jueganBlancas))
+            else:
+                v, m, gen, exp = (MiniMax(st, jueganBlancas))
+
+            print("v = " + str(v) + "  Accion seguida => " + str(m))
             st = st.applyAction(m)
             if (st.isFinal):
                 final = True
+                print("Gana la Maquina")
             st.profundidad = prof
             Utils.printBoard(st)
             print(f"-----------------------------\n\n\n")
 
 
-
-    #humanvsAI(927, 0, 0.1, True, 3)
-    #AIvsAI(100, 123123, 0, 0.1, False, 3, "alphabeta" )
 
 
 
@@ -154,10 +177,10 @@ if __name__ == '__main__':
 
     if (color == "white"):
         print("White enemy")
-        humanvsAI(seed, 0, prob, initial, profundidad, method)
+        humanvsAI(seed, 0, prob, initial, profundidad, method, False)
 
     elif (color == "black"):
-        humanvsAI(seed, 1, prob, initial, profundidad, method)
+        humanvsAI(seed, 1, prob, initial, profundidad, method, False)
 
     elif (color == "todo"):
         whoStarts = int(sys.argv[8])
@@ -165,7 +188,7 @@ if __name__ == '__main__':
         AIvsAI(maxJugadas, seed, whoStarts, prob, initial, profundidad, method)
 
     elif (color == "dummy"):
-        pass
+        humanvsAI(seed, 1, prob, initial, profundidad, method, True)
 
     end = time.time()
     print(f"Tiempo total {round(end - start, 4)} segundos")

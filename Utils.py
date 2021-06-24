@@ -38,7 +38,7 @@ diffPieces = 12
 names = ["wPawn", "wRook", "wBishop", "wkNnight", "wQueen", "wKing", "bPawn", "bRook", "bBishop", "bkNightight",
          "bQueen", "bKing"]
 letters = ["P", "R", "B", "N", "Q", "K", "p", "r", "b", "n", "q", "k", " "]
-valueNames = {0:"wPawn", 1:"wRook", 2:"wBishop", 3:"wkNnight", 4:"wQueen", 5:"wKing", 6:"bPawn", 7:"bRook", 8:"bBishop", 9:"bkNightight",
+valueNames = {0:"wPawn", 1:"wRook", 2:"wBishop", 3:"wkNnight", 4:"wQueen", 5:"wKing", 6:"bPawn", 7:"bRook", 8:"bBishop", 9:"bkNight",
          10:"bQueen", 11:"bKing"}
 
 # Note we use h for Horse instead of Knight
@@ -173,15 +173,15 @@ def piezaFactory(value):
 
 
 def getStates(x,y,state):
-    stateList = []
+    listaEstados = []
     value = state.m_board[x][y]
     pieza = piezaFactory(value)
-    modState = copy.deepcopy(state)#hardcopy del estado, para modificar agente/color
+    modState = copy.deepcopy(state)
     modState.m_agentPos = Position(x, y)
     actions = pieza.getPossibleActions(modState)
-    for each in actions:
-        stateList.append(modState.applyAction(each))
-    return stateList
+    for action in actions:
+        listaEstados.append(modState.applyAction(action))
+    return listaEstados
 
 
 

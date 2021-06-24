@@ -53,28 +53,30 @@ class State:
     # apply a given action over the current state -which remains unmodified. Return a new state
 
     def applyAction(self, action):
-        turn = -1
-        captura = False
+
         newState = copy.deepcopy(self)
         newState.profundidad = newState.profundidad - 1
         piezaCapturada = self.m_board[action.m_finalPos.row][action.m_finalPos.col]
         pieza = self.m_board[action.m_initPos.row][action.m_initPos.col]
         if (piezaCapturada == Utils.wKing) or (piezaCapturada == Utils.bKing) :
             newState.isFinal = True
-        if piezaCapturada != Utils.empty:
-            captura = True
 
 
+        #actualizacion de las listas
         if pieza <= 5 and pieza >= 0:
+            #eliminamos la posicion antigua de la lista y anadimos la nueva
             newState.listaBlancas.remove((action.m_initPos.row, action.m_initPos.col))
             newState.listaBlancas.append((action.m_finalPos.row, action.m_finalPos.col))
-            if captura:
+            if piezaCapturada != Utils.empty:
+                #si capturamos una pieza, la eliminamos de la lista rival
                 newState.listaNegras.remove((action.m_finalPos.row, action.m_finalPos.col))
 
         else:
+            #eliminamos la posicion antigua de la lista y anadimos la nueva
             newState.listaNegras.remove((action.m_initPos.row, action.m_initPos.col))
             newState.listaNegras.append((action.m_finalPos.row, action.m_finalPos.col))
-            if captura:
+            if piezaCapturada != Utils.empty:
+                #si capturamos una pieza, la eliminamos de la lista rival
                 newState.listaBlancas.remove((action.m_finalPos.row, action.m_finalPos.col))
     
 
@@ -227,7 +229,8 @@ class State:
                 utilidad += wRookEval[posX][posY]
             elif numberPiece == Utils.wPawn:
                 utilidad += wPawnEval[posX][posY]
-
+            elif numberPiece == Utils.wBishop:
+                utilidad += wKnightEval[posX][posY]
 
 
 
@@ -242,8 +245,8 @@ class State:
                 utilidad += bRookEval[posX][posY]
             elif numberPiece == Utils.bPawn:
                 utilidad += bPawnEval[posX][posY]
-
-
+            elif numberPiece == Utils.bBishop:
+                utilidad += bKnightEval[posX][posY]
 
         return utilidad
 

@@ -36,47 +36,51 @@ def Sucesores(state, jueganBlancas):
 
 
 
-def AlfaBeta (state, turn):
+def AlfaBeta (state, controlJuego):
     alfa = -1000000
     beta = 1000000
-    if turn:
-        v, m = MinValue(state, turn, None, alfa, beta)
+    if controlJuego:
+        #juegan blancas
+        v, m = MinValue(state, controlJuego, None, alfa, beta)
         return v, m, nodosGeneradosAB, nodosExpandidosAB
     else:
-        v, m = MaxValue(state, turn, None, alfa, beta)
+        #juegan negras
+        v, m = MaxValue(state, controlJuego, None, alfa, beta)
         return v, m, nodosGeneradosAB, nodosExpandidosAB
 
 
 
-def MinValue(state, turn,m, alfa, beta):
-    turn = (turn+1)%2
+def MinValue(state, turno, movimiento, alfa, beta):
+    turno = (turno+1)%2
     if state.isFinal or state.profundidad == 0:
-        m = state.move
-        return state.Utilidad(), m
+        movimiento = state.move
+        return state.Utilidad(), movimiento
     v = 1000000
-    for st in Sucesores(state,turn):
-        act_v = MaxValue(st, turn,m, alfa, beta)[0]
-        if act_v<v:
-            v = act_v
-            m = st.move
+    for st in Sucesores(state,turno):
+        valueV = MaxValue(st, turno,movimiento, alfa, beta)[0]
+        if valueV < v:
+            #igual que Min(v, MaxValue), pero permite coger el movimiento
+            v = valueV
+            movimiento = st.move
         if v <= alfa:
-            return v, m
+            return v, movimiento
         beta = min(v, beta)
-    return v,m
+    return v,movimiento
 
 
-def MaxValue(state, turn,m, alfa, beta):
-    turn = (turn+1)%2
+def MaxValue(state, turno,movimiento, alfa, beta):
+    turno = (turno+1)%2
     if state.isFinal or state.profundidad == 0:
-        m = state.move
-        return state.Utilidad(), m
+        movimiento = state.move
+        return state.Utilidad(), movimiento
     v = -10000000
-    for st in Sucesores(state, turn):
-        act_v = MinValue(st, turn,m, alfa, beta)[0]
-        if act_v>v:
-            v = act_v
-            m = st.move
+    for st in Sucesores(state, turno):
+        valueV = MinValue(st, turno, movimiento, alfa, beta)[0]
+        if valueV > v:
+            #igual que Max(v, MinValue), pero permite coger el movimiento
+            v = valueV
+            movimiento = st.move
         if v >= beta:
-            return v, m
+            return v, movimiento
         alfa = max(v, alfa)
-    return v,m
+    return v,movimiento
