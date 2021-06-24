@@ -55,6 +55,7 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3, test=0)
 
 
 def manual_move(state, turn, depth):
+    unmovable = True
     if turn:
         i = 1
         for pos in state.wElemList:
@@ -62,16 +63,26 @@ def manual_move(state, turn, depth):
             print(f"{i}: Move {Utils.valueNames[value_piece]} located [{pos[0]},{pos[1]}]")
             i = i + 1
         opt = int(input("Select a piece to move: "))
-        pos_selected = state.wElemList[opt - 1]
-        state.m_agentPos = Position(pos_selected[0], pos_selected[1])
-        piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
-        print(piece.get_possible_actions(state))
-        possible_actions = (piece.get_possible_actions(state))
-        i = 1
-        for action in possible_actions:
-            print(f"{i}: Move to position {action.m_finalPos}")
-            i = i + 1
-        act = int(input("Which action?"))
+        while unmovable:
+            pos_selected = state.wElemList[opt - 1]
+            state.m_agentPos = Position(pos_selected[0], pos_selected[1])
+            piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
+            print(piece.get_possible_actions(state))
+            possible_actions = (piece.get_possible_actions(state))
+            i = 1
+            for action in possible_actions:
+                print(f"{i}: Move to position {action.m_finalPos}")
+                i = i + 1
+            if len(possible_actions) != 0:
+                unmovable = False
+                range_check = True
+                while range_check:
+                    act = int(input("Which action?"))
+                    if act in range(1, len(possible_actions) + 1):
+                        range_check = False
+            else:
+                print(f"The piece {Utils.valueNames[piece.m_type]} has no legal moves")
+                opt = int(input("Select a different one: "))
         state = state.applyAction(possible_actions[act - 1])
         state.depth = depth
         Utils.print_board(state)
@@ -83,15 +94,25 @@ def manual_move(state, turn, depth):
             print(f"{i}: Move {Utils.valueNames[value_piece]} located [{pos[0]},{pos[1]}]")
             i = i + 1
         opt = int(input("Select a piece to move: "))
-        pos_selected = state.bElemList[opt - 1]
-        state.m_agentPos = Position(pos_selected[0], pos_selected[1])
-        piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
-        possible_actions = (piece.get_possible_actions(state))
-        i = 1
-        for action in possible_actions:
-            print(f"{i}: Move to position {action.m_finalPos}")
-            i = i + 1
-        act = int(input("Which action?"))
+        while unmovable:
+            pos_selected = state.bElemList[opt - 1]
+            state.m_agentPos = Position(pos_selected[0], pos_selected[1])
+            piece = Utils.piece_factory(state.m_board[pos_selected[0]][pos_selected[1]])
+            possible_actions = (piece.get_possible_actions(state))
+            i = 1
+            for action in possible_actions:
+                print(f"{i}: Move to position {action.m_finalPos}")
+                i = i + 1
+            if len(possible_actions) != 0:
+                unmovable = False
+                range_check = True
+                while range_check:
+                    act = int(input("Which action?"))
+                    if act in range(1, len(possible_actions)+1):
+                        range_check = False
+            else:
+                print(f"The piece {Utils.valueNames[piece.m_type]} has no legal moves")
+                opt = int(input("Select a different one: "))
         state = state.applyAction(possible_actions[act - 1])
         state.depth = depth
         Utils.print_board(state)
