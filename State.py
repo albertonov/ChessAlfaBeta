@@ -115,8 +115,4 @@ class State:
 
         return eval
 
-    def __hash__(self):
-        unique_total = 0
-        for each in self.m_board:
-            unique_total += sum(each)
-        return hash((self.m_agentPos.row, self.m_agentPos.col, self.m_agentPos, unique_total))
+
