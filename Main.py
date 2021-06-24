@@ -1,4 +1,3 @@
-# main to test the methods
 import sys
 import time
 
@@ -190,6 +189,4 @@ if __name__ == '__main__':
 
     end = time.time()
     print(f"Tiempo total {round(end - start, 4)} segundos")
-
-
-
+    #end

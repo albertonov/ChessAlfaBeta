@@ -148,26 +148,26 @@ def obtenerPieza(valorPieza):
             return Pawn(0)
         elif valorPieza == bPawn:
             return Pawn(1)
-        elif valorPieza == wRook:
-            return Rook(0)
-        elif valorPieza == bRook:
-            return Rook(1)
-        elif valorPieza == wKing:
-            return King(0)
-        elif valorPieza == bKing:
-            return King(1)
-        elif valorPieza == wQueen:
-            return Queen(0)
-        elif valorPieza == bQueen:
-            return Queen(1)
-        elif valorPieza == wBishop:
-            return  Bishop(0)
-        elif valorPieza == bBishop:
-            return Bishop(1)
         elif valorPieza == wKnight:
             return Knight(0)
         elif valorPieza == bKnight:
             return Knight(1)
+        elif valorPieza == wBishop:
+            return  Bishop(0)
+        elif valorPieza == bBishop:
+            return Bishop(1)
+        elif valorPieza == wRook:
+            return Rook(0)
+        elif valorPieza == bRook:
+            return Rook(1)
+        elif valorPieza == wQueen:
+            return Queen(0)
+        elif valorPieza == bQueen:
+            return Queen(1)
+        elif valorPieza == wKing:
+            return King(0)
+        elif valorPieza == bKing:
+            return King(1)
         else:
             return None
 
