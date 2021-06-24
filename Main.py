@@ -25,7 +25,7 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3, test=0)
         st = get_test_state(prob, seed, turn)
         st.m_board[1][1] = Utils.bRook
         st.m_board[2][3] = Utils.wRook
-    st.reloadPositions(depth)
+    st.reload_positions(depth)
     Utils.print_board(st)
     print('-' * LINE_LENGTH)
     final = False
@@ -36,7 +36,7 @@ def ai_vs_ai(max_moves, seed, turn, prob, initial, prune=False, depth=3, test=0)
         print(f"Action is ${m}")
         if st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5 or st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 11:
             final = True
-        st = st.applyAction(m)
+        st = st.apply_action(m)
         st.depth = depth
         Utils.print_board(st)
         stats.total_moves = stats.total_moves + 1
@@ -83,7 +83,7 @@ def manual_move(state, turn, depth):
             else:
                 print(f"The piece {Utils.valueNames[piece.m_type]} has no legal moves")
                 opt = int(input("Select a different one: "))
-        state = state.applyAction(possible_actions[act - 1])
+        state = state.apply_action(possible_actions[act - 1])
         state.depth = depth
         Utils.print_board(state)
         return state
@@ -113,7 +113,7 @@ def manual_move(state, turn, depth):
             else:
                 print(f"The piece {Utils.valueNames[piece.m_type]} has no legal moves")
                 opt = int(input("Select a different one: "))
-        state = state.applyAction(possible_actions[act - 1])
+        state = state.apply_action(possible_actions[act - 1])
         state.depth = depth
         Utils.print_board(state)
         return state
@@ -128,7 +128,7 @@ def human_vs_ai(seed, turn, prob, initial, prune=False, depth=3, ai_on=True, tes
         st = get_test_state(prob, seed, turn)
         st.m_board[6][4] = Utils.wQueen
         st.m_board[5][7] = Utils.bQueen
-    st.reloadPositions(depth)
+    st.reload_positions(depth)
     print('-' * LINE_LENGTH)
     Utils.print_board(st)
     print('-' * LINE_LENGTH)
@@ -147,7 +147,7 @@ def human_vs_ai(seed, turn, prob, initial, prune=False, depth=3, ai_on=True, tes
             if (st.m_board[m.m_finalPos.row][m.m_finalPos.col] == 5 or st.m_board[m.m_finalPos.row][
                 m.m_finalPos.col] == 11):
                 final = True
-            st = st.applyAction(m)
+            st = st.apply_action(m)
             st.depth = depth
             stats.total_moves = stats.total_moves + 1
         Utils.print_board(st)

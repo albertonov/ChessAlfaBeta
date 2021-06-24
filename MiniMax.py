@@ -34,12 +34,12 @@ def get_states(x, y, state):
     mod_state.m_agentPos = Position(x, y)
     actions = piece.get_possible_actions(mod_state)
     for each in actions:
-        state_list.append(mod_state.applyAction(each))
+        state_list.append(mod_state.apply_action(each))
     return state_list
 
 
 def minimax(state, turn, pruning):
-    stats.init_eval = state.getEval()
+    stats.init_eval = state.get_eval()
     if turn:
         v, m = minvalue(state, turn, None, pruning=pruning)
         stats.final_eval = v
@@ -54,7 +54,7 @@ def minvalue(state, turn, m, alfa=MINUS_INF, beta=PLUS_INF, pruning=False):
     turn = (turn + 1) % 2
     if state.isFinal or state.depth == 0:
         m = state.move
-        return state.getEval(), m
+        return state.get_eval(), m
     v = PLUS_INF
     for st in successors(state, turn):
         # min(v, minimax minimax)
@@ -73,7 +73,7 @@ def maxvalue(state, turn, m, alfa=MINUS_INF, beta=PLUS_INF, pruning=False):
     turn = (turn + 1) % 2
     if state.isFinal or state.depth == 0:
         m = state.move
-        return state.getEval(), m
+        return state.get_eval(), m
     v = MINUS_INF
     for st in successors(state, turn):
         # max(v, minimax minimax)

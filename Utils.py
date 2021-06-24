@@ -96,7 +96,7 @@ def get_states(x, y, state):
     mod_state.m_agentPos = Position(x, y)
     actions = piece.get_possible_actions(mod_state)
     for each in actions:
-        state_list.append(mod_state.applyAction(each))  # makes its own copy
+        state_list.append(mod_state.apply_action(each))  # makes its own copy
     return state_list
 
 
